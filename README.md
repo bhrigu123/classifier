@@ -7,7 +7,8 @@ $ sudo pip install classifier
 ```
 
 ## Usage
-First, go to your directory, where you want to classify your files.
+* Go to your directory, where you want to classify your files.
+* Run the following command in your terminal.
 ```sh
 $ classifier
 ``` 
