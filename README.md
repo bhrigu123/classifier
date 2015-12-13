@@ -16,3 +16,34 @@ $ classifier`
 >> Done!
 ```
 
+### Example
+Before
+```
+Downloads
+│   ├── Music
+│   │   └── 21Guns.mp3
+│   │   ├── LoveStrory.mp3
+.............................
+│   ├── PDFs
+│   │   └── Swift.pdf
+│   │   ├── Docs.pdf
+.............................
+│   ├── PDFs
+│   │   └── Swift.pdf
+│   │   ├── Docs.pdf
+│   ├── classifier
+│   │   └── __init__.py
+│   ├── classifier.egg-info
+│   │   ├── dependency_links.txt
+│   │   ├── not-zip-safe
+│   │   ├── PKG-INFO
+│   │   ├── SOURCES.txt
+│   │   └── top_level.txt
+│   ├── dist
+│   │   ├── classifier-1.0.tar.gz
+│   │   ├── classifier-1.1.tar.gz
+│   │   ├── classifier-1.2.tar.gz
+│   │   ├── classifier-1.3.1.tar.gz
+│   │   └── classifier-1.3.tar.gz
+```
+
