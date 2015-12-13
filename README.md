@@ -7,10 +7,12 @@ $ sudo pip install classifier
 ```
 
 ## Usage
-* Go to your directory, where you want to classify you files.
-* Enter `classifier`
+First, go to your directory, where you want to classify your files.
+```sh
+$ classifier`
 ``` 
-Scanning Files
-Done!
+```sh
+>> Scanning Files
+>> Done!
 ```
 
