@@ -17,33 +17,32 @@ $ classifier`
 ```
 
 ### Example
-Before
+Before:
+```
+Downloads
+│   ├── project.docx
+│   ├── 21 Guns.mp3
+│   ├── Sultans of Swing.mp3
+│   ├── report.pdf
+│   ├── charts.pdf
+│   ├── CKEditor.zip
+```
+
+After:
 ```
 Downloads
 │   ├── Music
-│   │   └── 21Guns.mp3
-│   │   ├── LoveStrory.mp3
+│   │   └── 21 Guns.mp3
+│   │   ├── Sultans of Swing.mp3
 .............................
-│   ├── PDFs
-│   │   └── Swift.pdf
-│   │   ├── Docs.pdf
+│   ├── pdfs
+│   │   └── report.pdf
+│   │   ├── charts.pdf
 .............................
-│   ├── PDFs
-│   │   └── Swift.pdf
-│   │   ├── Docs.pdf
-│   ├── classifier
-│   │   └── __init__.py
-│   ├── classifier.egg-info
-│   │   ├── dependency_links.txt
-│   │   ├── not-zip-safe
-│   │   ├── PKG-INFO
-│   │   ├── SOURCES.txt
-│   │   └── top_level.txt
-│   ├── dist
-│   │   ├── classifier-1.0.tar.gz
-│   │   ├── classifier-1.1.tar.gz
-│   │   ├── classifier-1.2.tar.gz
-│   │   ├── classifier-1.3.1.tar.gz
-│   │   └── classifier-1.3.tar.gz
+│   ├── docs
+│   │   └── project.docx
+│   ├── zip
+│   │   └── CKEditor.zip
+│   ├── Pictures
 ```
 
