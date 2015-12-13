@@ -9,15 +9,15 @@ $ sudo pip install classifier
 ## Usage
 First, go to your directory, where you want to classify your files.
 ```sh
-$ classifier`
+$ classifier
 ``` 
 ```sh
 >> Scanning Files
 >> Done!
 ```
 
-### Example
-Before:
+## Example
+###Before:
 ```
 Downloads
 │   ├── project.docx
@@ -28,7 +28,7 @@ Downloads
 │   ├── CKEditor.zip
 ```
 
-After:
+###After:
 ```
 Downloads
 │   ├── Music
