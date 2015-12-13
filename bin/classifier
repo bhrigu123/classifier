@@ -1,0 +1,26 @@
+#!/usr/bin/env python 
+import os
+
+Downloads = '/home/bhrigu/Downloads'
+target_pdf = '/home/bhrigu/Downloads/pdfs'
+target_mp3 = '/home/bhrigu/Music'
+target_img = '/home/bhrigu/Pictures'
+
+if not os.path.exists(target_pdf):
+	os.makedirs(target_pdf)
+if not os.path.exists(target_mp3):
+	os.makedirs(target_mp3)
+if not os.path.exists(target_img):
+	os.makedirs(target_img)
+
+print("Scanning Files")
+
+for file in os.listdir(Downloads):
+	if(file.endswith('.mp3')):
+		os.rename(''+Downloads+'/'+file,''+target_mp3+'/'+file)
+	elif(file.endswith('.pdf')):
+		os.rename(''+Downloads+'/'+file,''+target_pdf+'/'+file)
+	elif(file.endswith('.img')):
+		os.rename(''+Downloads+'/'+file,''+target_img+'/'+file)
+
+print("Done!")
