@@ -11,7 +11,7 @@ $ sudo pip install classifier
 * Run the following command in your terminal.
 ```sh
 $ classifier
-``` 
+```
 ```sh
 >> Scanning Files
 >> Done!
@@ -36,20 +36,21 @@ Downloads
 │   │   └── 21 Guns.mp3
 │   │   ├── Sultans of Swing.mp3
 .............................
-│   ├── pdfs
+│   ├── Documents
+│   │   └── project.docx
 │   │   └── report.pdf
 │   │   ├── charts.pdf
-.............................
-│   ├── docs
-│   │   └── project.docx
-│   ├── zip
+│   ├── Archives
 │   │   └── CKEditor.zip
+│   │   └── archive.7z
 │   ├── Pictures
+│   │   └── VacationPic.png
+│   │   └── Cats.jpg
 ```
 
-## Compatibility 
+## Compatibility
 * Python 2.7 / Python 3.4
-* Ubuntu / OSX / Windows 
+* Ubuntu / OSX / Windows
 
 ## The MIT License
 > Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
