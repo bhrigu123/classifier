@@ -1,18 +1,40 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 import os
 
+def moveto(target_folder):
+	os.rename(''+directory+'/'+file,''+target_folder+'/'+file)
+
 directory = os.getcwd()
-target_pdf = directory+'/pdfs'
+# target_pdf = directory+'/pdfs' PDFs are now moved to docs
 target_mp3 = directory+'/Music'
+target_vid = directory+'/Videos' #Added videos
 target_img = directory+'/Pictures'
-target_zip = directory+'/zip'
-target_docs = directory+'/docs'
+target_zip = directory+'/Archives' #renamed to archives to associate other formats e.g(zip, 7z, rar)
+target_docs = directory+'/Documents' #renamed to documents
 
+#list of known formats here can be added
+"""
+All format lists were taken from wikipedia, not all of them were added due to extensions not being exclusive to one format such as webm, or raw
+Audio - https://en.wikipedia.org/wiki/Audio_file_format
+Images - https://en.wikipedia.org/wiki/Image_file_formats
+Video - https://en.wikipedia.org/wiki/Video_file_format
+Documents - https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions Majority of it is from MS Office
+"""
 
-if not os.path.exists(target_pdf):
-	os.makedirs(target_pdf)
+image_formats = ['.png','.jpeg','.gif','.jpg','.bmp','.svg','webp']
+
+audio_formats = ['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff']
+
+video_formats = ['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp']
+
+doc_formats = ['.pdf','.doc','.docx','.xls','.xlsv','.ppt','.pptx','.ppsx']
+
+archive_formats = ['.rar','.zip','.7z','.tar.gz','.tar.bz2', '.tar']
+
 if not os.path.exists(target_mp3):
 	os.makedirs(target_mp3)
+if not os.path.exists(target_vid):
+	os.makedirs(target_vid)
 if not os.path.exists(target_img):
 	os.makedirs(target_img)
 if not os.path.exists(target_zip):
@@ -23,15 +45,16 @@ if not os.path.exists(target_docs):
 print("Scanning Files")
 
 for file in os.listdir(directory):
-	if(file.endswith('.mp3')):
-		os.rename(''+directory+'/'+file,''+target_mp3+'/'+file)
-	elif(file.endswith('.pdf')):
-		os.rename(''+directory+'/'+file,''+target_pdf+'/'+file)
-	elif(file.endswith('.png') or file.endswith('.jpg') or file.endswith('jpeg')):
-		os.rename(''+directory+'/'+file,''+target_img+'/'+file)
-	elif(file.endswith('.zip')):
-		os.rename(''+directory+'/'+file,''+target_zip+'/'+file)
-	elif(file.endswith('.docx') or file.endswith('doc')):
-		os.rename(''+directory+'/'+file,''+target_docs+'/'+file)
+	filename, file_ext = os.path.splitext(file)
+	if file_ext in audio_formats:
+		moveto(target_mp3)
+	elif file_ext in video_formats:
+		moveto(target_vid)
+	elif file_ext in image_formats:
+		moveto(target_img)
+	elif file_ext in archive_formats:
+		moveto(target_zip)
+	elif file_ext in doc_formats:
+		moveto(target_docs)
 
 print("Done!")
