@@ -61,14 +61,16 @@ Classify and move all file extensions, given in the args list, in the current di
 `classifier -s .py .pyc "Python Files"`
 
 ###Before
+```
 Workspace
 │   ├── views.py
 │   ├── temp.pyc
 │   ├── game.java
 │   ├── index.html
 │   ├── script.py
-
+```
 ###After
+```
 Downloads
 │   ├── Python Files
 │   │   └── views.py
@@ -77,7 +79,7 @@ Downloads
 |	|
 |	├── game.java
 |	├── index.html
-
+```
 ## Compatibility
 * Python 2.7 / Python 3.4
 * Linux / OSX 
