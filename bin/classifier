@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
-
-def moveto(target_folder):
+import sys
+def moveto(file, target_folder):
 	os.rename(''+directory+'/'+file,''+target_folder+'/'+file)
 
 directory = os.getcwd()
@@ -31,30 +31,52 @@ doc_formats = ['.pdf','.doc','.docx','.xls','.xlsv','.ppt','.pptx','.ppsx']
 
 archive_formats = ['.rar','.zip','.7z','.tar.gz','.tar.bz2', '.tar']
 
-if not os.path.exists(target_mp3):
-	os.makedirs(target_mp3)
-if not os.path.exists(target_vid):
-	os.makedirs(target_vid)
-if not os.path.exists(target_img):
-	os.makedirs(target_img)
-if not os.path.exists(target_zip):
-	os.makedirs(target_zip)
-if not os.path.exists(target_docs):
-	os.makedirs(target_docs)
+
 
 print("Scanning Files")
 
-for file in os.listdir(directory):
-	filename, file_ext = os.path.splitext(file)
-	if file_ext in audio_formats:
-		moveto(target_mp3)
-	elif file_ext in video_formats:
-		moveto(target_vid)
-	elif file_ext in image_formats:
-		moveto(target_img)
-	elif file_ext in archive_formats:
-		moveto(target_zip)
-	elif file_ext in doc_formats:
-		moveto(target_docs)
+if(len(sys.argv)==1):
+	if not os.path.exists(target_mp3):
+		os.makedirs(target_mp3)
+	if not os.path.exists(target_vid):
+		os.makedirs(target_vid)
+	if not os.path.exists(target_img):
+		os.makedirs(target_img)
+	if not os.path.exists(target_zip):
+		os.makedirs(target_zip)
+	if not os.path.exists(target_docs):
+		os.makedirs(target_docs)
 
-print("Done!")
+	for file in os.listdir(directory):
+		filename, file_ext = os.path.splitext(file)
+		if file_ext in audio_formats:
+			moveto(file, target_mp3)
+		elif file_ext in video_formats:
+			moveto(file, target_vid)
+		elif file_ext in image_formats:
+			moveto(file, target_img)
+		elif file_ext in archive_formats:
+			moveto(file, target_zip)
+		elif file_ext in doc_formats:
+			moveto(file, target_docs)
+	print("Done!")
+else:
+	formats = []
+	#Arguments will be given like: classifier -s .py .pyc "Python Files"
+	if(sys.argv[1]=='-s' or sys.argv[1]=='-S'):
+		for i in range(2,len(sys.argv)-1):
+			formats.append(sys.argv[i])
+
+		target_dir = directory+'/'+sys.argv[len(sys.argv)-1]
+		if not os.path.exists(target_dir):
+			os.makedirs(target_dir)
+
+		for file in os.listdir(directory):
+			filename, file_ext = os.path.splitext(file)
+			if(file_ext in formats):
+				moveto(file, target_dir)
+		print("Done!")
+	else:
+		print("Invalid Option")
+
+
