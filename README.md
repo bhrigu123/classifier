@@ -26,7 +26,10 @@ Downloads
 │   ├── Sultans of Swing.mp3
 │   ├── report.pdf
 │   ├── charts.pdf
+│   ├── VacationPic.png
 │   ├── CKEditor.zip
+│   ├── Cats.jpg
+│   ├── archive.7z
 ```
 
 ###After:
@@ -35,7 +38,7 @@ Downloads
 │   ├── Music
 │   │   └── 21 Guns.mp3
 │   │   ├── Sultans of Swing.mp3
-.............................
+|	|
 │   ├── Documents
 │   │   └── project.docx
 │   │   └── report.pdf
@@ -48,9 +51,36 @@ Downloads
 │   │   └── Cats.jpg
 ```
 
+
+##Options
+`classifier -[option] [args list] [FolderName]`
+## -s
+Classify and move all file extensions, given in the args list, in the current directory into the Folder Name
+
+###Example
+`classifier -s .py .pyc "Python Files"`
+
+###Before
+Workspace
+│   ├── views.py
+│   ├── temp.pyc
+│   ├── game.java
+│   ├── index.html
+│   ├── script.py
+
+###After
+Downloads
+│   ├── Python Files
+│   │   └── views.py
+│   │   ├── temp.pyc
+|	|	├── script.py
+|	|
+|	├── game.java
+|	├── index.html
+
 ## Compatibility
 * Python 2.7 / Python 3.4
-* Ubuntu / OSX / Windows
+* Linux / OSX 
 
 ## The MIT License
 > Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
