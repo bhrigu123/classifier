@@ -55,7 +55,8 @@ Downloads
 ##Options
 `classifier -[option] [args list] [FolderName]`
 ## -s
-Classify and move all file extensions, given in the args list, in the current directory into the Folder Name
+Classify specific files.
+Move all file extensions, given in the args list, in the current directory into the Folder Name
 
 ###Example
 `classifier -s .py .pyc "Python Files"`
@@ -71,7 +72,7 @@ Workspace
 ```
 ###After
 ```
-Downloads
+Workspace
 │   ├── Python Files
 │   │   └── views.py
 │   │   ├── temp.pyc
