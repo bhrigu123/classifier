@@ -20,17 +20,17 @@
 
     <section class="main-content">
       <h1>
-<a id="classifier" class="anchor" href="#classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classifier</h1>
+<a id="classifier" class="anchor" href="#classifier" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classifier</h1>
 
 <p>Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.</p>
 
 <h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
 <div class="highlight highlight-source-shell"><pre>$ sudo pip install classifier</pre></div>
 
 <h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
 <ul>
 <li>Go to your directory, where you want to classify your files.</li>
@@ -43,10 +43,10 @@
 <span class="pl-k">&gt;&gt;</span> Done<span class="pl-k">!</span></pre></div>
 
 <h2>
-<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h2>
 
 <h3>
-<a id="before" class="anchor" href="#before" aria-hidden="true"><span class="octicon octicon-link"></span></a>Before:</h3>
+<a id="before" class="anchor" href="#before" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Before:</h3>
 
 <pre><code>Downloads
 │   ├── project.docx
@@ -54,38 +54,83 @@
 │   ├── Sultans of Swing.mp3
 │   ├── report.pdf
 │   ├── charts.pdf
+│   ├── VacationPic.png
 │   ├── CKEditor.zip
+│   ├── Cats.jpg
+│   ├── archive.7z
 </code></pre>
 
 <h3>
-<a id="after" class="anchor" href="#after" aria-hidden="true"><span class="octicon octicon-link"></span></a>After:</h3>
+<a id="after" class="anchor" href="#after" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>After:</h3>
 
 <pre><code>Downloads
 │   ├── Music
 │   │   └── 21 Guns.mp3
 │   │   ├── Sultans of Swing.mp3
-.............................
-│   ├── pdfs
+|   |
+│   ├── Documents
+│   │   └── project.docx
 │   │   └── report.pdf
 │   │   ├── charts.pdf
-.............................
-│   ├── docs
-│   │   └── project.docx
-│   ├── zip
+│   ├── Archives
 │   │   └── CKEditor.zip
+│   │   └── archive.7z
 │   ├── Pictures
+│   │   └── VacationPic.png
+│   │   └── Cats.jpg
 </code></pre>
 
 <h2>
-<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compatibility</h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+
+<p><code>classifier -[option] [args list] [FolderName]</code></p>
+
+<h2>
+<a id="-s" class="anchor" href="#-s" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-s</h2>
+
+<p>Classify specific files.<br>
+Move all file extensions, given in the args list, in the current directory into the Folder Name</p>
+
+<h3>
+<a id="example-1" class="anchor" href="#example-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
+
+<p><code>classifier -s .py .pyc "Python Files"</code></p>
+
+<h3>
+<a id="before-1" class="anchor" href="#before-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Before</h3>
+
+<pre><code>Workspace
+│   ├── views.py
+│   ├── temp.pyc
+│   ├── game.java
+│   ├── index.html
+│   ├── script.py
+</code></pre>
+
+<h3>
+<a id="after-1" class="anchor" href="#after-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>After</h3>
+
+<pre><code>Workspace
+│   ├── Python Files
+│   │   └── views.py
+│   │   ├── temp.pyc
+|   |   ├── script.py
+|   |
+|   ├── game.java
+|   ├── index.html
+
+</code></pre>
+
+<h2>
+<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility</h2>
 
 <ul>
 <li>Python 2.7 / Python 3.4</li>
-<li>Ubuntu / OSX / Windows </li>
+<li>Linux / OSX </li>
 </ul>
 
 <h2>
-<a id="the-mit-license" class="anchor" href="#the-mit-license" aria-hidden="true"><span class="octicon octicon-link"></span></a>The MIT License</h2>
+<a id="the-mit-license" class="anchor" href="#the-mit-license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The MIT License</h2>
 
 <blockquote>
 <p>Copyright (c) 2015 Bhrigu Srivastava <a href="http://bhrigu123.github.io">http://bhrigu123.github.io</a></p>
