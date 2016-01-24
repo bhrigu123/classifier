@@ -50,6 +50,7 @@ if(len(sys.argv)==1):
 
 	for file in os.listdir(directory):
 		filename, file_ext = os.path.splitext(file)
+		file_ext = file_ext.lower()
 		if file_ext in audio_formats:
 			moveto(file, target_mp3)
 		elif file_ext in video_formats:
@@ -74,6 +75,7 @@ else:
 
 		for file in os.listdir(directory):
 			filename, file_ext = os.path.splitext(file)
+			file_ext = file_ext.lower()
 			if(file_ext in formats):
 				moveto(file, target_dir)
 		print("Done!")
