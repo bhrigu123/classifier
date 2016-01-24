@@ -28,7 +28,7 @@ audio_formats = ['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff']
 
 video_formats = ['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp']
 
-doc_formats = ['.pdf','.doc','.docx','.xls','.xlsv','.ppt','.pptx','.ppsx']
+doc_formats = ['.pdf','.doc','.docx','.xls','.xlsv','.xlsx','.ppt','.pptx','.ppsx','.odp','.odt','.ods']
 
 archive_formats = ['.rar','.zip','.7z','.tar.gz','.tar.bz2', '.tar']
 
