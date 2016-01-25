@@ -53,13 +53,22 @@ Downloads
 
 
 ##Options
-`classifier -[option] [args list] [FolderName]`
-## -s
-Classify specific files.<br>
-Move all file extensions, given in the args list, in the current directory into the Folder Name
+`classifier [-h] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
+			[-sf SPECIFIC_FOLDER] [-o OUTPUT]`
+## -h --help
+show help message and exit
+
+## -st --specific-types
+Move all file extensions, given in the args list, in the current directory into the Specific Folder
+
+## -sf --specific-folder
+Folder to move files with Specific Type
+
+## -o --output
+Main directory to put organized folders
 
 ###Example
-`classifier -s .py .pyc "Python Files"`
+`classifier -st .py .pyc -sf Python Files`
 
 ###Before
 ```
