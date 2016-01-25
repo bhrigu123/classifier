@@ -83,18 +83,33 @@
 <h2>
 <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
 
-<p><code>classifier -[option] [args list] [FolderName]</code></p>
+<p><code>classifier [-h] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
+            [-sf SPECIFIC_FOLDER] [-o OUTPUT]</code></p>
 
 <h2>
-<a id="-s" class="anchor" href="#-s" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-s</h2>
+<a id="-h---help" class="anchor" href="#-h---help" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-h --help</h2>
 
-<p>Classify specific files.<br>
-Move all file extensions, given in the args list, in the current directory into the Folder Name</p>
+<p>show help message and exit</p>
+
+<h2>
+<a id="-st---specific-types" class="anchor" href="#-st---specific-types" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-st --specific-types</h2>
+
+<p>Move all file extensions, given in the args list, in the current directory into the Specific Folder</p>
+
+<h2>
+<a id="-sf---specific-folder" class="anchor" href="#-sf---specific-folder" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-sf --specific-folder</h2>
+
+<p>Folder to move files with Specific Type</p>
+
+<h2>
+<a id="-o---output" class="anchor" href="#-o---output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-o --output</h2>
+
+<p>Main directory to put organized folders</p>
 
 <h3>
 <a id="example-1" class="anchor" href="#example-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
 
-<p><code>classifier -s .py .pyc "Python Files"</code></p>
+<p><code>classifier -st .py .pyc -sf Python Files</code></p>
 
 <h3>
 <a id="before-1" class="anchor" href="#before-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Before</h3>
