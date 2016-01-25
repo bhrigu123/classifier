@@ -6,7 +6,7 @@ import argparse
 
 #list of known formats here can be added
 """
-All format lists were taken from wikipedia, not all of them were added due to extensions 
+All format lists were taken from wikipedia, not all of them were added due to extensions
 not being exclusive to one format such as webm, or raw
 Audio 		- 	https://en.wikipedia.org/wiki/Audio_file_format
 Images 		- 	https://en.wikipedia.org/wiki/Image_file_formats
@@ -61,7 +61,7 @@ def main(argv):
     args = parser.parse_args()
 
     formats = {
-		'Music'		:	['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff'], 
+		'Music'		:	['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff'],
 		'Videos'	:	['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp'],
 		'Pictures'	: 	['.png','.jpeg','.gif','.jpg','.bmp','.svg','webp'],
 		'Archives'	: 	['.rar','.zip','.7z','.gz','.bz2', '.tar'],
@@ -70,7 +70,7 @@ def main(argv):
 	}
 
     if ((args.specific_folder is None) != (args.specific_types is None)):
-    	print 'Specific Folder and Specific Types should be combined'
+    	print('Specific Folder and Specific Types should be combined')
     	sys.exit()
 
     if ((not (args.specific_folder is None)) and (not (args.specific_types is None))):
