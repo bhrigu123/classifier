@@ -1,10 +1,132 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.1
 Name: classifier
-Version: 1.5
-Summary: Classify the files in your Downloads folder into suitable destinations.
+Version: 1.5.1
+Summary: Organize files in your directory instantly, by classifying them into different folders.
 Home-page: http://github.com/bhrigu123/classifier
 Author: Bhrigu Srivastava
 Author-email: captain.bhrigu@gmail.com
 License: MIT
-Description: UNKNOWN
-Platform: UNKNOWN
+Description: # Classifier
+        Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
+        
+        ## Installation
+        ```sh
+        $ sudo pip install classifier
+        ```
+        
+        ## Usage
+        * Go to your directory, where you want to classify your files.
+        * Run the following command in your terminal.
+        ```sh
+        $ classifier
+        ```
+        ```sh
+        >> Scanning Files
+        >> Done!
+        ```
+        
+        ## Example
+        ###Before:
+        ```
+        Downloads
+        âÂ Â  âââ project.docx
+        âÂ Â  âââ 21 Guns.mp3
+        âÂ Â  âââ Sultans of Swing.mp3
+        âÂ Â  âââ report.pdf
+        âÂ Â  âââ charts.pdf
+        âÂ Â  âââ VacationPic.png
+        âÂ Â  âââ CKEditor.zip
+        âÂ Â  âââ Cats.jpg
+        âÂ Â  âââ archive.7z
+        ```
+        
+        ###After:
+        ```
+        Downloads
+        âÂ Â  âââ Music
+        âÂ Â  âÂ Â  âââ 21 Guns.mp3
+        âÂ Â  âÂ Â  âââ Sultans of Swing.mp3
+        |	|
+        âÂ Â  âââ Documents
+        âÂ Â  âÂ Â  âââ project.docx
+        âÂ Â  âÂ Â  âââ report.pdf
+        âÂ Â  âÂ Â  âââ charts.pdf
+        âÂ Â  âââ Archives
+        âÂ Â  âÂ Â  âââ CKEditor.zip
+        âÂ Â  âÂ Â  âââ archive.7z
+        âÂ Â  âââ Pictures
+        âÂ Â  âÂ Â  âââ VacationPic.png
+        âÂ Â  âÂ Â  âââ Cats.jpg
+        ```
+        
+        
+        ##Options
+        `classifier [-h] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
+        			[-sf SPECIFIC_FOLDER] [-o OUTPUT]`
+        ## -h --help
+        show help message and exit
+        
+        ## -st --specific-types
+        Move all file extensions, given in the args list, in the current directory into the Specific Folder
+        
+        ## -sf --specific-folder
+        Folder to move files with Specific Type
+        
+        ## -o --output
+        Main directory to put organized folders
+        
+        ###Example
+        `classifier -st .py .pyc -sf Python Files`
+        
+        ###Before
+        ```
+        Workspace
+        âÂ Â  âââ views.py
+        âÂ Â  âââ temp.pyc
+        âÂ Â  âââ game.java
+        âÂ Â  âââ index.html
+        âÂ Â  âââ script.py
+        ```
+        
+        
+        ###After
+        ```
+        Workspace
+        âÂ Â  âââ Python Files
+        âÂ Â  âÂ Â  âââ views.py
+        âÂ Â  âÂ Â  âââ temp.pyc
+        |	|	âââ script.py
+        |	|
+        |	âââ game.java
+        |	âââ index.html
+        
+        ```
+        
+        ## The MIT License
+        > Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
+        
+        > Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        > The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+        
+        > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+        
+Platform: Linux
+Platform: OSX
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.4

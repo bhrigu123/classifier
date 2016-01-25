@@ -93,9 +93,6 @@ Workspace
 |	├── index.html
 
 ```
-## Compatibility
-* Python 2.7 / Python 3.4
-* Linux / OSX 
 
 ## The MIT License
 > Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
