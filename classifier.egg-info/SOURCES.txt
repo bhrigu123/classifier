@@ -1,3 +1,4 @@
+setup.cfg
 setup.py
 bin/classifier
 classifier/__init__.py

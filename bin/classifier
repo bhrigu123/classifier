@@ -4,6 +4,8 @@ import os
 import sys
 import argparse
 
+from config import version, description, formats
+
 #list of known formats here can be added
 """
 All format lists were taken from wikipedia, not all of them were added due to extensions
@@ -44,10 +46,13 @@ def classify(formats, output):
 
 	print("Done!")
 
-def main(argv):
-    description =   "Organize files in your directory instantly, "
-    description +=  "by classifying them into different folders"
-    parser = argparse.ArgumentParser(description = description)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument("--version", action="version",
+                        version=version,
+                        help="Version Info")
 
     parser.add_argument("-st", "--specific-types", type=str, nargs='+',
         help="Move all file extensions, given in the args list, in the current directory into the Specific Folder")
@@ -60,15 +65,6 @@ def main(argv):
 
     args = parser.parse_args()
 
-    formats = {
-		'Music'		:	['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff'],
-		'Videos'	:	['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp'],
-		'Pictures'	: 	['.png','.jpeg','.gif','.jpg','.bmp','.svg','webp'],
-		'Archives'	: 	['.rar','.zip','.7z','.gz','.bz2', '.tar'],
-		'Documents'	:	['.txt', '.pdf','.doc','.docx','.xls','.xlsv','.xlsx',
-	           			 '.ppt','.pptx','.ppsx','.odp','.odt','.ods']
-	}
-
     if ((args.specific_folder is None) != (args.specific_types is None)):
     	print('Specific Folder and Specific Types should be combined')
     	sys.exit()
@@ -80,8 +76,3 @@ def main(argv):
     	args.output = os.getcwd()
 
     classify(formats, args.output)
-
-    sys.exit()
-
-if __name__ == "__main__":
-   main(sys.argv[1:])
