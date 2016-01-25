@@ -64,7 +64,7 @@ def main(argv):
 		'Music'		:	['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff'], 
 		'Videos'	:	['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp'],
 		'Pictures'	: 	['.png','.jpeg','.gif','.jpg','.bmp','.svg','webp'],
-		'Archives'	: 	['.rar','.zip','.7z','.tar.gz','.tar.bz2', '.tar'],
+		'Archives'	: 	['.rar','.zip','.7z','.gz','.bz2', '.tar'],
 		'Documents'	:	['.txt', '.pdf','.doc','.docx','.xls','.xlsv','.xlsx',
 	           			 '.ppt','.pptx','.ppsx','.odp','.odt','.ods']
 	}
