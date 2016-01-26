@@ -3,8 +3,12 @@ Organize files in your current directory, by classifying them into folders of mu
 
 ## Installation
 ```sh
-$ sudo pip install classifier
+$ pip install classifier
 ```
+#### Compatibility
+* Python 2.7 / Python 3.4
+* Linux / OSX / Windows
+
 
 ## Usage
 * Go to your directory, where you want to classify your files.
@@ -93,9 +97,7 @@ Workspace
 |	├── index.html
 
 ```
-## Compatibility
-* Python 2.7 / Python 3.4
-* Linux / OSX 
+
 
 ## The MIT License
 > Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
