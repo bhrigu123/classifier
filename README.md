@@ -54,7 +54,7 @@ Downloads
 
 ##Options
 `classifier [-h] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
-			[-sf SPECIFIC_FOLDER] [-o OUTPUT]`
+			[-sf SPECIFIC_FOLDER] [-o OUTPUT_DIR] [-i INPUT_DIR] [-r]`
 ## -h --help
 show help message and exit
 
@@ -64,8 +64,12 @@ Move all file extensions, given in the args list, in the current directory into 
 ## -sf --specific-folder
 Folder to move files with Specific Type
 
-## -o --output
+## -o --input-dir
+Main directory to organize
+
+## -o --output-dir
 Main directory to put organized folders
+
 
 ###Example
 `classifier -st .py .pyc -sf Python Files`
