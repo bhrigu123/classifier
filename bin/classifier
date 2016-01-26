@@ -60,7 +60,7 @@ def main(argv):
         help="Main directory to organize")
 
     parser.add_argument("-r","--recursive",action="store_true", 
-            help="Organize the files of all subdirectories recursively")
+        help="Organize the files of all subdirectories recursively")
 
     args = parser.parse_args()
 
