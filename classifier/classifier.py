@@ -44,7 +44,7 @@ def classify(formats, output):
 
 	print("Done!")
 
-def main(argv):
+def main():
     description =   "Organize files in your directory instantly, "
     description +=  "by classifying them into different folders"
     parser = argparse.ArgumentParser(description = description)
@@ -82,6 +82,3 @@ def main(argv):
     classify(formats, args.output)
 
     sys.exit()
-
-if __name__ == "__main__":
-   main(sys.argv[1:])

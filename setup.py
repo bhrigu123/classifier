@@ -9,5 +9,8 @@ setup(name="classifier",
 	author_email="captain.bhrigu@gmail.com",
 	license='MIT',
 	packages=["classifier"],
-	scripts=["bin/classifier"],
+	entry_points="""
+    [console_scripts]
+    classifier = classifier.classifier:main
+    """,
 	zip_safe=False)
