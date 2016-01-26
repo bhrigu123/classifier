@@ -62,7 +62,7 @@ def main():
 
     formats = {
 		'Music'		:	['.mp3','.aac','.flac','.ogg','.wma','.m4a','.aiff'],
-		'Videos'	:	['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp'],
+		'Videos'	:	['.flv','.ogv','.avi','.mp4','.mpg','.mpeg','.3gp', '.mkv'],
 		'Pictures'	: 	['.png','.jpeg','.gif','.jpg','.bmp','.svg','.webp', '.psd'],
 		'Archives'	: 	['.rar','.zip','.7z','.gz','.bz2','.tar','.dmg'],
 		'Documents'	:	['.txt', '.pdf','.doc','.docx','.xls','.xlsv','.xlsx',
