@@ -68,7 +68,8 @@ def main():
 		'Documents'	:	['.txt', '.pdf','.doc','.docx','.xls','.xlsv','.xlsx',
 	           			 '.ppt','.pptx','.ppsx','.odp','.odt','.ods','.md','.json','.csv'],
 		'Books'		:	['.mobi', '.epub'],
-		'RPMPackages':	['.rpm']
+		'RPMPackages'   :	['.rpm'],
+		'Codes'         :       ['.py', '.c', '.cpp', '.rb', '.js', '.html', '.css', '.php', '.cc', '.h', '.hpp', '.jar', '.asm', '.vb',    '.cs', '.pl', '.r', '.m']
 	}
 
     if ((args.specific_folder is None) != (args.specific_types is None)):
