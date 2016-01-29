@@ -13,4 +13,7 @@ setup(name="classifier",
     [console_scripts]
     classifier = classifier.classifier:main
     """,
+        install_requires=[
+            'arrow',
+        ],
 	zip_safe=False)
