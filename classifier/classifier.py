@@ -64,7 +64,7 @@ def main():
 		'RPMPackages' : ['.rpm']
 	}
 
-    if ((args.specific_folder is None) != (args.specific_types is None)):
+    if bool(args.specific_folder) ^ bool(args.specific_types):
     	print('Specific Folder and Specific Types need to be specified together')
     	sys.exit()
 
