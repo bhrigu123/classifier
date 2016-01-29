@@ -65,13 +65,13 @@ def main():
 	}
 
     if ((args.specific_folder is None) != (args.specific_types is None)):
-    	print('Specific Folder and Specific Types should be combined')
+    	print('Specific Folder and Specific Types need to be specified together')
     	sys.exit()
 
-    if ((not (args.specific_folder is None)) and (not (args.specific_types is None))):
+    if args.specific_folder and args.specific_types:
     	formats = {args.specific_folder : args.specific_types}
 
-    if (args.output is None):
+    if args.output is None:
     	args.output = os.getcwd()
 
     classify(formats, args.output)
