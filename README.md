@@ -72,7 +72,7 @@ Folder to move files with Specific Type
 Main directory to put organized folders
 
 ###Example
-`classifier -st .py .pyc -sf Python Files`
+`classifier -st .py .pyc -sf "Python Files"`
 
 ###Before
 ```
