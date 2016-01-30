@@ -25,7 +25,7 @@ def moveto(file, from_folder, to_folder):
         os.rename(from_file, to_file)
 
 
-def classify(formats, output):
+def classify(formats, output, lowercase):
     print("Scanning Files")
 
     directory = os.getcwd()
@@ -35,6 +35,8 @@ def classify(formats, output):
         file_ext = file_ext.lower()
 
         for folder, ext_list in list(formats.items()):
+            if lowercase:
+                folder = folder.lower()
             folder = os.path.join(output, folder)
 
             if file_ext in ext_list:
@@ -72,7 +74,10 @@ def main():
 
     parser.add_argument("-dt", "--date", action='store_true',
                         help="Organize files by creation date")
-
+    
+    parser.add_argument("-lc", "--lowercase", action='store_true',
+                        help="New directory names are lowercase")
+    
     args = parser.parse_args()
 
     formats = {
@@ -100,6 +105,6 @@ def main():
     if args.date:
         classify_by_date('DD-MM-YYYY', args.output)
     else:
-        classify(formats, args.output)
+        classify(formats, args.output, args.lowercase)
 
     sys.exit()
