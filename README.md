@@ -75,6 +75,7 @@ Folder to move files with Specific Type
 Main directory to put organized folders 
 
 ###Example
+######Classify specific file types
 `classifier -st .py .pyc -sf "Python Files"`
 
 ###Before
