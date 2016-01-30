@@ -57,10 +57,13 @@ Downloads
 
 
 ##Options
-`classifier [-h] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
+`classifier [-h] [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
 			[-sf SPECIFIC_FOLDER] [-o OUTPUT]`
 ## -h --help
 show help message and exit
+
+## -dt --date
+Classify the files by their Creation Date
 
 ## -st --specific-types
 Move all file extensions, given in the args list, in the current directory into the Specific Folder
@@ -69,7 +72,7 @@ Move all file extensions, given in the args list, in the current directory into 
 Folder to move files with Specific Type
 
 ## -o --output
-Main directory to put organized folders
+Main directory to put organized folders 
 
 ###Example
 `classifier -st .py .pyc -sf "Python Files"`
@@ -98,6 +101,11 @@ Workspace
 
 ```
 
+###Example
+######Classify by Date:
+`classifier -dt`
+
+======
 
 ## The MIT License
 > Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
