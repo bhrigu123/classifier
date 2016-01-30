@@ -18,11 +18,10 @@ def moveto(file, from_folder, to_folder):
     from_file = os.path.join(from_folder, file)
     to_file = os.path.join(to_folder, file)
 
-    #to move only files, not folders
-    if(os.path.isfile(from_file)):
+    # to move only files, not folders
+    if os.path.isfile(from_file):
         if not os.path.exists(to_folder):
             os.makedirs(to_folder)
-            
         os.rename(from_file, to_file)
 
 
@@ -45,7 +44,7 @@ def classify(formats, output):
 
 
 def classify_by_date(date_format, output_dir):
-    print "Scanning Files"
+    print("Scanning Files")
 
     directory = os.getcwd()
     files = os.listdir(directory)
@@ -55,7 +54,7 @@ def classify_by_date(date_format, output_dir):
         folder = creation_date.format(date_format)
         moveto(file, directory, folder)
 
-    print "Done!"
+    print("Done!")
 
 
 def main():
