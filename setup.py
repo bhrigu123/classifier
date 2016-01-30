@@ -11,7 +11,7 @@ setup(name="classifier",
 	packages=["classifier"],
 	entry_points="""
     [console_scripts]
-    classifier = classifier.classifier:main
+    classifier = classifier.main:main
     """,
         install_requires=[
             'arrow',
