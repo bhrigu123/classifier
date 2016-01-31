@@ -14,57 +14,49 @@ Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_ext
 """
 
 
-def moveto(file, from_folder, to_folder):
+def move_to(file, from_folder, to_folder):
     from_file = os.path.join(from_folder, file)
     to_file = os.path.join(to_folder, file)
 
-    # to move only files, not folders
-    if os.path.isfile(from_file):
+    #to move only files, not folders
+    if(os.path.isfile(from_file)):
         if not os.path.exists(to_folder):
             os.makedirs(to_folder)
+            
         os.rename(from_file, to_file)
 
-
 def classify(formats, output):
-    print("Scanning Files")
-
+    moved_any = False
     directory = os.getcwd()
-
-    for file in os.listdir(directory):
-        filename, file_ext = os.path.splitext(file)
+    for a_file in os.listdir(directory):
+        filename, file_ext = os.path.splitext(a_file)
         file_ext = file_ext.lower()
 
         for folder, ext_list in list(formats.items()):
             folder = os.path.join(output, folder)
 
             if file_ext in ext_list:
-                moveto(file, directory, folder)
-
-    print("Done!")
-
+                move_to(a_file, directory, folder)
+                moved_any = True
+    return moved_any
 
 def classify_by_date(date_format, output_dir):
-    print("Scanning Files")
-
     directory = os.getcwd()
     files = os.listdir(directory)
     creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(x))), files)
 
     for file, creation_date in creation_dates:
         folder = creation_date.format(date_format)
-        moveto(file, directory, folder)
-
-    print("Done!")
-
+        move_to(file, directory, folder)
 
 def main():
     description = "Organize files in your directory instantly,by classifying them into different folders"
     parser = argparse.ArgumentParser(description=description)
 
-    parser.add_argument("-st", "--specific-types", type=str, nargs='+',
+    parser.add_argument("-st", "--specific_types", type=str, nargs='+',
                         help="Move all file extensions, given in the args list, in the current directory into the Specific Folder")
 
-    parser.add_argument("-sf", "--specific-folder", type=str,
+    parser.add_argument("-sf", "--specific_folder", type=str,
                         help="Folder to move Specific File Type")
 
     parser.add_argument("-o", "--output", type=str,
@@ -81,25 +73,33 @@ def main():
         'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd'],
         'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz'],
         'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
-                              '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
+        '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
         'Books': ['.mobi', '.epub'],
         'RPMPackages': ['.rpm']
     }
 
-    if bool(args.specific_folder) ^ bool(args.specific_types):
-        print(
-            'Specific Folder and Specific Types need to be specified together')
-        sys.exit()
+    if not len(sys.argv) > 1:
+        parser.print_help()
+    else:        
+        if bool(args.specific_folder) ^ bool(args.specific_types):
+            print('You must pass in a file type and a folder.')
+            sys.exit()
 
-    if args.specific_folder and args.specific_types:
-        formats = {args.specific_folder: args.specific_types}
+        if args.specific_folder and args.specific_types:
+            formats = {args.specific_folder: args.specific_types}
 
-    if args.output is None:
-        args.output = os.getcwd()
+        if args.output is None:
+            args.output = os.getcwd()
 
-    if args.date:
-        classify_by_date('DD-MM-YYYY', args.output)
-    else:
-        classify(formats, args.output)
+        if args.date:
+            classify_by_date('DD-MM-YYYY', args.output)
+        else:
+            was_moved = classify(formats, args.output)
+            if was_moved:
+                print('Moved {0} files into /{1}'.format(
+                    args.specific_types[0], args.specific_folder))
+            else:
+                print('No files ending with {0} are in the current directory'.format(
+                    args.specific_types[0]))
 
     sys.exit()
