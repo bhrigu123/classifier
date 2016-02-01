@@ -15,6 +15,7 @@ setup(
         """,
         install_requires=[
             'arrow',
+            'six',
         ],
         zip_safe=False
 )
