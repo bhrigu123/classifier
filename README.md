@@ -57,22 +57,13 @@ Downloads
 
 
 ##Options
-`classifier [-h] [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
-			[-sf SPECIFIC_FOLDER] [-o OUTPUT]`
-## -h --help
-show help message and exit
+`classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]`
 
-## -dt --date
-Classify the files by their Creation Date
-
-## -st --specific-types
-Move all file extensions, given in the args list, in the current directory into the Specific Folder
-
-## -sf --specific-folder
-Folder to move files with Specific Type
-
-## -o --output
-Main directory to put organized folders 
+	-h --help		show help message and exit
+	-dt --date		Classify the files by their Creation Date
+	-st --specific-types	Move the specific file extensions into the Specific Folder
+	-sf --specific-folder	Folder to move files with Specific Type
+	-o --output		Main directory to put organized folders 
 
 ###Example
 ######Classify specific file types
