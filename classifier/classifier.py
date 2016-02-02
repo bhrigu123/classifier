@@ -38,7 +38,10 @@ def classify(formats, output):
             folder = os.path.join(output, folder)
 
             if file_ext in ext_list:
-                moveto(file, directory, folder)
+                try:
+                    moveto(file, directory, folder)
+                except Exception as e:
+                    print('Cannot move file - {} - {}'.format(file, str(e)))
 
     print("Done!")
 
