@@ -47,7 +47,7 @@ def classify_by_date(date_format, output_dir):
     print("Scanning Files")
 
     directory = os.getcwd()
-    files = os.listdir(directory)
+    files = [x for x in os.listdir(directory) if not x.startswith('.')]
     creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(x))), files)
 
     for file, creation_date in creation_dates:
