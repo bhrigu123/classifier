@@ -3,6 +3,8 @@ import os
 import sys
 import argparse
 import arrow
+import magic
+import mimetypes
 
 """
 All format lists were taken from wikipedia, not all of them were added due to extensions
@@ -25,14 +27,26 @@ def moveto(file, from_folder, to_folder):
         os.rename(from_file, to_file)
 
 
-def classify(formats, output):
+def classify(formats, output, mime):
     print("Scanning Files")
 
     directory = os.getcwd()
 
+    if mime:
+        m = magic.open(magic.MAGIC_MIME_TYPE)
+        m.load()
+        mimetypes.init()
+        print "Guessing filetypes based on mime"
+
     for file in os.listdir(directory):
         filename, file_ext = os.path.splitext(file)
         file_ext = file_ext.lower()
+
+        if not file_ext and os.path.isfile(filename) and mime:
+            mtype = m.file(filename)
+            mime_ext =  mimetypes.guess_extension(mtype)
+            if mime_ext:
+                file_ext = mime_ext.lower()
 
         for folder, ext_list in list(formats.items()):
             folder = os.path.join(output, folder)
@@ -72,18 +86,23 @@ def main():
 
     parser.add_argument("-dt", "--date", action='store_true',
                         help="Organize files by creation date")
+    
+    parser.add_argument("-m", "--mime", action='store_true',
+                        help="Guess filetype by using mime")
+
 
     args = parser.parse_args()
 
     formats = {
         'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', 'wav'],
         'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts'],
-        'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd'],
+        'Pictures': ['.png', '.jpeg', '.gif', '.jpg','.jpe', '.bmp', '.svg', '.webp', '.psd'],
         'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz'],
         'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
         'Books': ['.mobi', '.epub'],
-        'RPMPackages': ['.rpm']
+        'RPMPackages': ['.rpm'],
+        'DEBPackages': ['.deb', '.ddeb','.udeb']
     }
 
     if bool(args.specific_folder) ^ bool(args.specific_types):
@@ -100,6 +119,6 @@ def main():
     if args.date:
         classify_by_date('DD-MM-YYYY', args.output)
     else:
-        classify(formats, args.output)
+        classify(formats, args.output, args.mime)
 
     sys.exit()

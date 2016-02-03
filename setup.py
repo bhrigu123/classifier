@@ -15,6 +15,8 @@ setup(
         """,
         install_requires=[
             'arrow',
+            'magic',
+            'mimetypes'
         ],
         zip_safe=False
 )
