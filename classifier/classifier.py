@@ -83,7 +83,8 @@ def main():
         'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
         'Books': ['.mobi', '.epub'],
-        'RPMPackages': ['.rpm']
+        'RPMPackages': ['.rpm'],
+        'DEBPackages': ['.deb']
     }
 
     if bool(args.specific_folder) ^ bool(args.specific_types):
