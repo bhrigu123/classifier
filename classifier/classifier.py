@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-import os
-import sys
 import argparse
 import arrow
+import os
+import six
+import sys
+
+from six.moves import getcwd
 
 """
 All format lists were taken from wikipedia, not all of them were added due to extensions
@@ -28,7 +31,7 @@ def moveto(file, from_folder, to_folder):
 def classify(formats, output):
     print("Scanning Files")
 
-    directory = os.getcwd()
+    directory = getcwd()
 
     for file in os.listdir(directory):
         filename, file_ext = os.path.splitext(file)
@@ -46,7 +49,7 @@ def classify(formats, output):
 def classify_by_date(date_format, output_dir):
     print("Scanning Files")
 
-    directory = os.getcwd()
+    directory = getcwd()
     files = [x for x in os.listdir(directory) if not x.startswith('.')]
     creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(x))), files)
 
@@ -55,6 +58,18 @@ def classify_by_date(date_format, output_dir):
         moveto(file, directory, folder)
 
     print("Done!")
+
+
+def _format_text_arg(arg):
+    if not isinstance(arg, six.text_type):
+        arg = arg.decode('utf-8')
+    return arg
+
+
+def _format_arg(arg):
+    if isinstance(arg, six.string_types):
+        arg = _format_text_arg(arg)
+    return arg
 
 
 def main():
@@ -92,14 +107,17 @@ def main():
         sys.exit()
 
     if args.specific_folder and args.specific_types:
-        formats = {args.specific_folder: args.specific_types}
+        specific_folder = _format_arg(args.specific_folder)
+        formats = {specific_folder: args.specific_types}
 
     if args.output is None:
-        args.output = os.getcwd()
+        output = getcwd()
+    else:
+        output = _format_arg(args.output)
 
     if args.date:
-        classify_by_date('DD-MM-YYYY', args.output)
+        classify_by_date('DD-MM-YYYY', output)
     else:
-        classify(formats, args.output)
+        classify(formats, output)
 
     sys.exit()
