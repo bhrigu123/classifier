@@ -100,7 +100,7 @@ def main():
         'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz'],
         'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-        'Books': ['.mobi', '.epub'],
+        'Books': ['.mobi', '.epub', '.chm'],
         'RPMPackages': ['.rpm']
     }
 
