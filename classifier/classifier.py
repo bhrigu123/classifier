@@ -101,6 +101,7 @@ def main():
         'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
         'Books': ['.mobi', '.epub', '.chm'],
+        'DEBPackages': ['.deb'],
         'RPMPackages': ['.rpm']
     }
 
