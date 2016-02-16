@@ -102,6 +102,7 @@ def main():
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
         'Books': ['.mobi', '.epub', '.chm'],
         'DEBPackages': ['.deb'],
+        'Programs': ['.exe', '.msi'],
         'RPMPackages': ['.rpm']
     }
 
