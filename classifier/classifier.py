@@ -7,6 +7,8 @@ import sys
 
 from six.moves import getcwd
 
+from . import config
+
 """
 All format lists were taken from wikipedia, not all of them were added due to extensions
 not being exclusive to one format such as webm, or raw
@@ -93,17 +95,8 @@ def main():
 
     args = parser.parse_args()
 
-    formats = {
-        'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav'],
-        'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts'],
-        'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd'],
-        'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz'],
-        'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
-                              '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-        'Books': ['.mobi', '.epub', '.chm'],
-        'DEBPackages': ['.deb'],
-        'RPMPackages': ['.rpm']
-    }
+    config.init_config(write_file=True)
+    formats = config.get_formats()
 
     if bool(args.specific_folder) ^ bool(args.specific_types):
         print(
