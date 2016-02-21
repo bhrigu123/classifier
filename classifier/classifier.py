@@ -4,7 +4,7 @@ import arrow
 import os
 import six
 import sys
-
+import json
 from six.moves import getcwd
 
 """
@@ -30,10 +30,10 @@ def moveto(file, from_folder, to_folder):
 
 def classify(formats, output):
     print("Scanning Files")
-
     directory = getcwd()
+    obj = []
 
-    for file in os.listdir(directory):
+    for file in [x for x in os.listdir(directory) if not x.startswith('.')]:
         filename, file_ext = os.path.splitext(file)
         file_ext = file_ext.lower()
 
@@ -43,24 +43,68 @@ def classify(formats, output):
             if file_ext in ext_list:
                 try:
                     moveto(file, directory, folder)
+                    obj.append({"file": file, "directory": directory, "folder": folder})
+
                 except Exception as e:
                     print('Cannot move file - {} - {}'.format(file, str(e)))
-
+    # record info to json
+    dump_json(0, obj)
     print("Done!")
 
 
 def classify_by_date(date_format, output_dir):
     print("Scanning Files")
-
     directory = getcwd()
+    obj = []
     files = [x for x in os.listdir(directory) if not x.startswith('.')]
     creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(x))), files)
 
     for file, creation_date in creation_dates:
         folder = creation_date.format(date_format)
         moveto(file, directory, folder)
-
+        obj.append({"file": file, "directory": directory, "folder": folder})
+    # record info to json
+    dump_json(0, obj)
     print("Done!")
+
+
+def classify_redo(output):
+    print("Scanning Files")
+    obj = load_json()
+    status, items = obj['status'], obj['obj_json']
+    # check repeat
+    if int(status) == -1:
+        print("Repeat redo")
+        return
+    else:
+        dump_json(-1, items)
+
+    for item in items:
+        file, directory, folder = item['file'], item['directory'], item['folder']
+        dir_der = os.path.join(directory, folder)
+        try:
+            moveto(file, dir_der, directory)
+        except Exception as e:
+            print("Redo Files - {} - {}".format(file, str(e)))
+        # remove the (directory+folder)
+        if len([x for x in os.listdir(dir_der) if not x.startswith('.')]) == 0:
+            os.rmdir(dir_der)
+
+    # remove --output
+    if len([x for x in os.listdir(output) if not x.startswith('.')]) == 0:
+        os.removedirs(output)
+    print("Done!")
+
+def dump_json(status, obj):
+    obj_json = {"status": status, "obj_json": obj}
+    with open(".redo.json", "wt") as fp:
+        json.dump(obj_json, fp, ensure_ascii=False, indent=4, sort_keys=True)
+
+
+def load_json():
+    with open(".redo.json", "rt") as fp:
+        obj = json.load(fp)
+    return obj
 
 
 def _format_text_arg(arg):
@@ -90,16 +134,18 @@ def main():
 
     parser.add_argument("-dt", "--date", action='store_true',
                         help="Organize files by creation date")
+    parser.add_argument("-rd", "--redo", action='store_true',
+                        help="Redo the last action")
 
     args = parser.parse_args()
 
     formats = {
-        'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav'],
+        'Music': ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav'],
         'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts'],
         'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd'],
         'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz'],
         'Documents': ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsv', '.xlsx',
-                              '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
+                      '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
         'Books': ['.mobi', '.epub', '.chm'],
         'DEBPackages': ['.deb'],
         'RPMPackages': ['.rpm']
@@ -121,6 +167,8 @@ def main():
 
     if args.date:
         classify_by_date('DD-MM-YYYY', output)
+    elif args.redo:
+        classify_redo(output)
     else:
         classify(formats, output)
 
