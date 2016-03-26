@@ -64,6 +64,7 @@ Downloads
 	-st --specific-types	Move the specific file extensions into the Specific Folder
 	-sf --specific-folder	Folder to move files with Specific Type
 	-o --output				Main directory to put organized folders 
+	-rd --redo              Redo the last action 
 
 ###Example
 ######Classify specific file types
@@ -96,6 +97,12 @@ Workspace
 ###Example
 ######Classify by Date:
 `classifier -dt`
+
+###Example
+######Redo the last action
+`classifier -rd`
+or
+`classifier -rd -o path`
 
 ======
 
