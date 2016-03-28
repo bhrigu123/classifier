@@ -27,7 +27,15 @@
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<div class="highlight highlight-source-shell"><pre>$ sudo pip install classifier</pre></div>
+<div class="highlight highlight-source-shell"><pre>$ pip install classifier</pre></div>
+
+<h4>
+<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility</h4>
+
+<ul>
+<li>Python 2.7 / Python 3.4</li>
+<li>Linux / OSX / Windows</li>
+</ul>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
@@ -83,33 +91,22 @@
 <h2>
 <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
 
-<p><code>classifier [-h] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] 
-            [-sf SPECIFIC_FOLDER] [-o OUTPUT]</code></p>
+<p><code>classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]</code></p>
 
-<h2>
-<a id="-h---help" class="anchor" href="#-h---help" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-h --help</h2>
-
-<p>show help message and exit</p>
-
-<h2>
-<a id="-st---specific-types" class="anchor" href="#-st---specific-types" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-st --specific-types</h2>
-
-<p>Move all file extensions, given in the args list, in the current directory into the Specific Folder</p>
-
-<h2>
-<a id="-sf---specific-folder" class="anchor" href="#-sf---specific-folder" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-sf --specific-folder</h2>
-
-<p>Folder to move files with Specific Type</p>
-
-<h2>
-<a id="-o---output" class="anchor" href="#-o---output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>-o --output</h2>
-
-<p>Main directory to put organized folders</p>
+<pre><code>-h --help               show help message and exit
+-dt --date              Classify the files by their Creation Date
+-st --specific-types    Move the specific file extensions into the Specific Folder
+-sf --specific-folder   Folder to move files with Specific Type
+-o --output             Main directory to put organized folders 
+</code></pre>
 
 <h3>
 <a id="example-1" class="anchor" href="#example-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
 
-<p><code>classifier -st .py .pyc -sf Python Files</code></p>
+<h6>
+<a id="classify-specific-file-types" class="anchor" href="#classify-specific-file-types" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classify specific file types</h6>
+
+<p><code>classifier -st .py .pyc -sf "Python Files"</code></p>
 
 <h3>
 <a id="before-1" class="anchor" href="#before-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Before</h3>
@@ -136,13 +133,15 @@
 
 </code></pre>
 
-<h2>
-<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility</h2>
+<h3>
+<a id="example-2" class="anchor" href="#example-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
 
-<ul>
-<li>Python 2.7 / Python 3.4</li>
-<li>Linux / OSX </li>
-</ul>
+<h6>
+<a id="classify-by-date" class="anchor" href="#classify-by-date" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Classify by Date:</h6>
+
+<p><code>classifier -dt</code></p>
+
+<h1></h1>
 
 <h2>
 <a id="the-mit-license" class="anchor" href="#the-mit-license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The MIT License</h2>
