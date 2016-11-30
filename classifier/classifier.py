@@ -28,10 +28,8 @@ def moveto(file, from_folder, to_folder):
         os.rename(from_file, to_file)
 
 
-def classify(formats, output):
+def classify(formats, output, directory):
     print("Scanning Files")
-
-    directory = getcwd()
 
     for file in os.listdir(directory):
         filename, file_ext = os.path.splitext(file)
@@ -49,15 +47,15 @@ def classify(formats, output):
     print("Done!")
 
 
-def classify_by_date(date_format, output_dir):
+def classify_by_date(date_format, output, directory):
     print("Scanning Files")
 
-    directory = getcwd()
     files = [x for x in os.listdir(directory) if not x.startswith('.')]
-    creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(x))), files)
+    creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(os.path.join(directory, x)))), files)
 
     for file, creation_date in creation_dates:
         folder = creation_date.format(date_format)
+        folder = os.path.join(output, folder)
         moveto(file, directory, folder)
 
     print("Done!")
@@ -87,6 +85,9 @@ def main():
 
     parser.add_argument("-o", "--output", type=str,
                         help="Main directory to put organized folders")
+
+    parser.add_argument("-d", "--directory", type=str,
+                        help="The directory whose files to classify")
 
     parser.add_argument("-dt", "--date", action='store_true',
                         help="Organize files by creation date")
@@ -120,9 +121,18 @@ def main():
     else:
         output = _format_arg(args.output)
 
-    if args.date:
-        classify_by_date('DD-MM-YYYY', output)
+    if args.directory is None:
+        directory = getcwd()
     else:
-        classify(formats, output)
+        directory = _format_arg(args.directory)
+        if args.output is None:
+            ''' if -d arg given without the -o arg, keeping the files of -d 
+            in the -d path only after classifying '''
+            output = directory
+
+    if args.date:
+        classify_by_date('DD-MM-YYYY', output, directory)
+    else:
+        classify(formats, output, directory)
 
     sys.exit()
