@@ -104,7 +104,7 @@ Workspace
 
 `Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory and  the classified folders be in that source directory only. Eg:<br>
 `classifier -d /home/source'`<br>
-This classifies the directory /home/source directory only.
+This classifies the directory /home/source.
 
 
 
