@@ -63,7 +63,8 @@ Downloads
 	-dt --date				Classify the files by their Creation Date
 	-st --specific-types	Move the specific file extensions into the Specific Folder
 	-sf --specific-folder	Folder to move files with Specific Type
-	-o --output				Main directory to put organized folders 
+	-d --directory				The directory whose files you want to classify
+	-o --output				Main directory to put organized folders
 
 ###Example
 ######Classify specific file types
@@ -96,6 +97,16 @@ Workspace
 ###Example
 ######Classify by Date:
 `classifier -dt`
+
+###Example
+######Classify files of directory '/home/source' and put them in location '/home/dest':
+`classifier -d /home/source -o /home/dest`
+
+`Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory and  the classified folders be in that source directory only. Eg:<br>
+`classifier -d /home/source'`<br>
+This classifies the directory /home/source directory only.
+
+
 
 ======
 
