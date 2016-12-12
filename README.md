@@ -33,25 +33,27 @@ Downloads
 │   ├── VacationPic.png
 │   ├── CKEditor.zip
 │   ├── Cats.jpg
-│   ├── archive.7z
+│   └── archive.7z
 ```
 
 ###After:
 ```
 Downloads
 │   ├── Music
-│   │   └── 21 Guns.mp3
-│   │   ├── Sultans of Swing.mp3
-|	|
+│   │   ├── 21 Guns.mp3
+│   │   └── Sultans of Swing.mp3
+|   |
 │   ├── Documents
-│   │   └── project.docx
-│   │   └── report.pdf
-│   │   ├── charts.pdf
+│   │   ├── project.docx
+│   │   ├── report.pdf
+│   │   └── charts.pdf
+|   |
 │   ├── Archives
-│   │   └── CKEditor.zip
+│   │   ├── CKEditor.zip
 │   │   └── archive.7z
+|   |
 │   ├── Pictures
-│   │   └── VacationPic.png
+│   │   ├── VacationPic.png
 │   │   └── Cats.jpg
 ```
 
@@ -77,7 +79,7 @@ Workspace
 │   ├── temp.pyc
 │   ├── game.java
 │   ├── index.html
-│   ├── script.py
+│   └── script.py
 ```
 
 
@@ -85,12 +87,12 @@ Workspace
 ```
 Workspace
 │   ├── Python Files
-│   │   └── views.py
+│   │   ├── views.py
 │   │   ├── temp.pyc
-|	|	├── script.py
-|	|
-|	├── game.java
-|	├── index.html
+|   |	└── script.py
+|   |
+|   ├── game.java
+|   └── index.html
 
 ```
 
