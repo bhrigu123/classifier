@@ -1,0 +1,8 @@
+title: Classifier
+description: Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
