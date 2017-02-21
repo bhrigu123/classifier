@@ -4,6 +4,7 @@ import arrow
 import os
 import six
 import sys
+import yaml
 
 from six.moves import getcwd
 
@@ -92,20 +93,34 @@ def main():
     parser.add_argument("-dt", "--date", action='store_true',
                         help="Organize files by creation date")
 
+    parser.add_argument("-c", "--config", type=str,
+                        help="Config file")
+
     args = parser.parse_args()
 
-    formats = {
-        'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
-        'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
-        'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
-        'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
-        'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
+    if args.config:
+        conf_file_name = os.path.expanduser(args.config)
+    else:
+        conf_file_name = os.getenv("HOME") + "/.config/.classify.conf"
+
+    if os.path.exists(conf_file_name):
+        with open(conf_file_name, "r") as conf_file:
+            formats = yaml.load(conf_file)
+    else:
+        formats = {
+            'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
+            'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
+            'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
+            'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
+            'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-        'Books': ['.mobi', '.epub', '.chm'],
-        'DEBPackages': ['.deb'],
-        'Programs': ['.exe', '.msi'],
-        'RPMPackages': ['.rpm']
-    }
+            'Books': ['.mobi', '.epub', '.chm'],
+            'DEBPackages': ['.deb'],
+            'Programs': ['.exe', '.msi'],
+            'RPMPackages': ['.rpm']
+        }
+        with open(conf_file_name, 'w') as conf_file:
+            yaml.safe_dump(formats, conf_file)
 
     if bool(args.specific_folder) ^ bool(args.specific_types):
         print(
@@ -126,7 +141,7 @@ def main():
     else:
         directory = _format_arg(args.directory)
         if args.output is None:
-            ''' if -d arg given without the -o arg, keeping the files of -d 
+            ''' if -d arg given without the -o arg, keeping the files of -d
             in the -d path only after classifying '''
             output = directory
 
