@@ -1,18 +1,17 @@
 # Classifier
-Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
+整理当前文件夹内的文件，把它们分类到 music, pdfs, images 等目录中。
 
-## Installation
+## 安装
 ```sh
 $ pip install classifier
 ```
-#### Compatibility
+#### 平台兼容性
 * Python 2.7 / Python 3.4
 * Linux / OSX / Windows
 
 
-## Usage
-* Go to your directory, where you want to classify your files.
-* Run the following command in your terminal.
+## 使用说明
+* 到需要整理分类的目录中自行下面的指令 
 ```sh
 $ classifier
 ```
@@ -21,8 +20,8 @@ $ classifier
 >> Done!
 ```
 
-## Example
-###Before:
+## 示例
+### 整理前:
 ```
 Downloads
 │   ├── project.docx
@@ -36,7 +35,7 @@ Downloads
 │   └── archive.7z
 ```
 
-###After:
+###整理后:
 ```
 Downloads
 │   ├── Music
@@ -58,22 +57,22 @@ Downloads
 ```
 
 
-##Options
+##选项
 `classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]`
 
-	-h --help				show help message and exit
-	-dt --date				Classify the files by their Creation Date
-	-st --specific-types	Move the specific file extensions into the Specific Folder
-	-sf --specific-folder	Folder to move files with Specific Type
-	-d --directory				The directory whose files you want to classify
-	-o --output				Main directory to put organized folders
-    -c --config             Configure file, Default is `~/.config/classifier`
+	-h --help				显示帮助
+	-dt --date				按日期归类文件
+	-st --specific-types	将某个扩展名的文件归类
+	-sf --specific-folder	归类到的目录
+	-d --directory		    需要整理的目录
+	-o --output				输出目录
+    -c --config             配置文件,默认是 `~/.config/classifier`
 
-###Example
-######Classify specific file types
+### 示例
+###### 整理文件的扩展名以空格分割
 `classifier -st .py .pyc -sf "Python Files"`
 
-###Before
+### 整理前:
 ```
 Workspace
 │   ├── views.py
@@ -84,7 +83,7 @@ Workspace
 ```
 
 
-###After
+###整理后:
 ```
 Workspace
 │   ├── Python Files
@@ -97,17 +96,17 @@ Workspace
 
 ```
 
-###Example
-######Classify by Date:
+### 示例
+###### 按日期整理:
 `classifier -dt`
 
-###Example
-######Classify files of directory '/home/source' and put them in location '/home/dest':
+### 示例
+###### 将 `/home/source` 目录下的文件分类整理到 `/home/dest` 目录:
 `classifier -d /home/source -o /home/dest`
 
-`Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory and  the classified folders be in that source directory only. Eg:<br>
-`classifier -d /home/source'`<br>
-This classifies the directory /home/source.
+`Note: ` 如果只是通过 `-d` 设置了需要整理的目录，没有通过 `-o` 设置输出目录, 输出目录会使用 `-d` 设置的整理目录. 例如:<br>
+`classifier -d /home/source'` <br>
+在 `/home/source` 下进行归类整理.
 
 
 
