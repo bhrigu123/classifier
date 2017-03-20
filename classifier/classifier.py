@@ -4,6 +4,7 @@ import arrow
 import os
 import six
 import sys
+import yaml
 
 from six.moves import getcwd
 
@@ -16,16 +17,26 @@ Video 		- 	https://en.wikipedia.org/wiki/Video_file_format
 Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
 """
 
+default_formats = {
+    'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
+    'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
+    'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
+    'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
+    'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
+                      '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
+    'Books': ['.mobi', '.epub', '.chm'],
+    'DEBPackages': ['.deb'],
+    'Programs': ['.exe', '.msi'],
+    'RPMPackages': ['.rpm']
+}
 
 def moveto(file, from_folder, to_folder):
     from_file = os.path.join(from_folder, file)
     to_file = os.path.join(to_folder, file)
 
-    # to move only files, not folders
-    if os.path.isfile(from_file):
-        if not os.path.exists(to_folder):
-            os.makedirs(to_folder)
-        os.rename(from_file, to_file)
+    if not os.path.exists(to_folder):
+        os.makedirs(to_folder)
+    os.rename(from_file, to_file)
 
 
 def classify(formats, output, directory):
@@ -73,6 +84,24 @@ def _format_arg(arg):
     return arg
 
 
+def _load_config(conf_file_name):
+    with open(conf_file_name, "r") as conf_file:
+        try:
+            formats = yaml.load(conf_file)
+        except yaml.YAMLError as exc:
+            print("Parser error, used default config")
+            return default_formats
+        return formats
+
+
+def _save_config(conf_file_name, formats):
+    try:
+        with open(conf_file_name, 'w') as conf_file:
+            yaml.safe_dump(formats, conf_file)
+    except yaml.YAMLError as exc:
+        print("Save config exception.")
+
+
 def main():
     description = "Organize files in your directory instantly,by classifying them into different folders"
     parser = argparse.ArgumentParser(description=description)
@@ -92,20 +121,22 @@ def main():
     parser.add_argument("-dt", "--date", action='store_true',
                         help="Organize files by creation date")
 
+    parser.add_argument("-c", "--config", type=str,
+                        help="Config file")
+
     args = parser.parse_args()
 
-    formats = {
-        'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
-        'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
-        'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
-        'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
-        'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
-                              '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-        'Books': ['.mobi', '.epub', '.chm'],
-        'DEBPackages': ['.deb'],
-        'Programs': ['.exe', '.msi'],
-        'RPMPackages': ['.rpm']
-    }
+    if args.config:
+        conf_file_name = os.path.expanduser(args.config)
+    else:
+        conf_file_name = os.getenv("HOME") + "/.config/classifier"
+
+    if os.path.exists(conf_file_name):
+        formats = _load_config(conf_file_name)
+    else:
+        formats = default_formats
+
+    _save_config(conf_file_name, formats)
 
     if bool(args.specific_folder) ^ bool(args.specific_types):
         print(
@@ -126,12 +157,12 @@ def main():
     else:
         directory = _format_arg(args.directory)
         if args.output is None:
-            ''' if -d arg given without the -o arg, keeping the files of -d 
+            ''' if -d arg given without the -o arg, keeping the files of -d
             in the -d path only after classifying '''
             output = directory
 
     if args.date:
-        classify_by_date('DD-MM-YYYY', output, directory)
+        classify_by_date('YYYY-MM-DD', output, directory)
     else:
         classify(formats, output, directory)
 

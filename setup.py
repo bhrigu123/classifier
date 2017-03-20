@@ -15,6 +15,7 @@ setup(
         """,
         install_requires=[
             'arrow',
+            'pyyaml',
             'six>=1.10.0',
         ],
         zip_safe=False
