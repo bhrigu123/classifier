@@ -162,7 +162,7 @@ def main():
             output = directory
 
     if args.date:
-        classify_by_date('DD-MM-YYYY', output, directory)
+        classify_by_date('YYYY-MM-DD', output, directory)
     else:
         classify(formats, output, directory)
 
