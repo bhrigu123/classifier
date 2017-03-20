@@ -17,6 +17,18 @@ Video 		- 	https://en.wikipedia.org/wiki/Video_file_format
 Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
 """
 
+default_formats = {
+    'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
+    'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
+    'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
+    'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
+    'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
+                      '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
+    'Books': ['.mobi', '.epub', '.chm'],
+    'DEBPackages': ['.deb'],
+    'Programs': ['.exe', '.msi'],
+    'RPMPackages': ['.rpm']
+}
 
 def moveto(file, from_folder, to_folder):
     from_file = os.path.join(from_folder, file)
@@ -72,6 +84,24 @@ def _format_arg(arg):
     return arg
 
 
+def _load_config(conf_file_name):
+    with open(conf_file_name, "r") as conf_file:
+        try:
+            formats = yaml.load(conf_file)
+        except yaml.YAMLError as exc:
+            print("Parser error, used default config")
+            return default_formats
+        return formats
+
+
+def _save_config(conf_file_name, formats):
+    try:
+        with open(conf_file_name, 'w') as conf_file:
+            yaml.safe_dump(formats, conf_file)
+    except yaml.YAMLError as exc:
+        print("Save config exception.")
+
+
 def main():
     description = "Organize files in your directory instantly,by classifying them into different folders"
     parser = argparse.ArgumentParser(description=description)
@@ -99,26 +129,14 @@ def main():
     if args.config:
         conf_file_name = os.path.expanduser(args.config)
     else:
-        conf_file_name = os.getenv("HOME") + "/.config/.classify.conf"
+        conf_file_name = os.getenv("HOME") + "/.config/classifier"
 
     if os.path.exists(conf_file_name):
-        with open(conf_file_name, "r") as conf_file:
-            formats = yaml.load(conf_file)
+        formats = _load_config(conf_file_name)
     else:
-        formats = {
-            'Music'	: ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
-            'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
-            'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
-            'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
-            'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
-                              '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-            'Books': ['.mobi', '.epub', '.chm'],
-            'DEBPackages': ['.deb'],
-            'Programs': ['.exe', '.msi'],
-            'RPMPackages': ['.rpm']
-        }
-        with open(conf_file_name, 'w') as conf_file:
-            yaml.safe_dump(formats, conf_file)
+        formats = default_formats
+
+    _save_config(conf_file_name, formats)
 
     if bool(args.specific_folder) ^ bool(args.specific_types):
         print(
