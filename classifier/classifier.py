@@ -1,9 +1,21 @@
 #!/usr/bin/env python
+
+""" Classifier
+
+    ----------------Authors----------------
+    Bhrigu Srivastava <captain.bhrigu@gmail.com>
+    ----------------Licence----------------
+    The MIT License [https://opensource.org/licenses/MIT]
+    Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
+
+"""
+
 import argparse
 import arrow
 import os
 import sys
 
+VERSION = 'Classifier 1.99dev'
 
 class Classifier:
     """
@@ -18,6 +30,9 @@ class Classifier:
     def __init__(self):
         self.description = "Organize files in your directory instantly,by classifying them into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
+
+        self.parser.add_argument("-v", "--version", action='store_true',
+                                 help="show version, filename and exit")
 
         self.parser.add_argument("-st", "--specific-types", type=str, nargs='+',
                                  help="Move all file extensions, given in the args list, " +
@@ -106,6 +121,9 @@ class Classifier:
         return arg
 
     def main(self):
+        if self.args.version:
+            print(VERSION + '\n' + os.path.realpath(__file__))
+            sys.exit()
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
             print(
                 'Specific Folder and Specific Types need to be specified together')

@@ -1,3 +1,11 @@
+# News
+This is a fork to update classifier mailnly for my own uses but to also address some of the issues people have reported and haven't been fixed yet.
+
+# TODO
+* Enable config saving for individual folders and possibly a master file
+* Enable recursive search.
+* Remove dependancies on arrow
+
 # Classifier
 Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
 
