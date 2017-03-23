@@ -17,6 +17,7 @@ import sys
 
 VERSION = 'Classifier 1.99dev'
 
+
 class Classifier:
     """
     All format lists were taken from wikipedia, not all of them were added due to extensions
@@ -75,6 +76,7 @@ class Classifier:
             if not os.path.exists(to_folder):
                 os.makedirs(to_folder)
             os.rename(from_file, to_file)
+        return
 
     def classify(self, formats, output, directory):
         print("Scanning Files")
@@ -95,6 +97,7 @@ class Classifier:
                             print('Cannot move file - {} - {}'.format(file, str(e)))
 
         print("Done!")
+        return
 
     def classify_by_date(self, date_format, output, directory):
         print("Scanning Files")
@@ -109,6 +112,7 @@ class Classifier:
             self.moveto(file, directory, folder)
 
         print("Done!")
+        return
 
     def _format_text_arg(self, arg):
         if not isinstance(arg, str):
@@ -123,7 +127,7 @@ class Classifier:
     def main(self):
         if self.args.version:
             print(VERSION + '\n' + os.path.realpath(__file__))
-            sys.exit()
+            return False
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
             print(
                 'Specific Folder and Specific Types need to be specified together')
@@ -148,11 +152,11 @@ class Classifier:
                 output = directory
 
         if self.args.date:
-            self.classify_by_date('DD-MM-YYYY', output, directory)
+            self.classify_by_date('YYYY-MM-DD', output, directory)
         else:
             self.classify(self.formats, output, directory)
 
-        sys.exit()
+        return True
 
 
 Classifier()

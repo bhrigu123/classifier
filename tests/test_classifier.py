@@ -3,10 +3,7 @@
 import arrow
 import os
 import shutil
-import sys
 import unittest
-
-sys.path.append('../classifier')
 import classifier.classifier as clf
 
 
@@ -44,7 +41,7 @@ class ClassifierTest(unittest.TestCase):
             self.assertTrue(os.path.exists(final_file_path))
 
     def test_classify_bydate(self):
-        date_format = 'DD-MM-YYYY'
+        date_format = 'YYYY-MM-DD'
         target_files = []
         for file_ in self.__tmp_files:
             target_dir = arrow.get(os.path.getctime(file_)).format(date_format)
@@ -52,7 +49,7 @@ class ClassifierTest(unittest.TestCase):
             target_files.append(final_file_path)
         clf.self.classify_by_date(date_format, self.__location)
         for file_ in target_files:
-            self.assertTrue(os.path.exists(final_file_path))
+            self.assertTrue(os.path.exists(file_))
         for dir_ in self.__tmp_dirs:
             self.assertTrue(os.path.exists(dir_))
 
