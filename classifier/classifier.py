@@ -125,17 +125,18 @@ class Classifier:
                             tmpbreak = True
                 if not tmpbreak:
                     for folder, ext_list in list(formats.items()):
-                        folder = os.path.join(output, folder)
+                        # never move files in the ignore list
+                        if not folder == 'IGNORE':
+                            folder = os.path.join(output, folder)
 
-                        if file_ext in ext_list:
-                            try:
-                                self.moveto(file, directory, folder)
-                            except Exception as e:
-                                print('Cannot move file - {} - {}'.format(file, str(e)))
-            if os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
+                            if file_ext in ext_list:
+                                try:
+                                    self.moveto(file, directory, folder)
+                                except Exception as e:
+                                    print('Cannot move file - {} - {}'.format(file, str(e)))
+            elif os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
                 self.classify(self.formats, output, os.path.join(directory, file))
 
-        print("Done!\n")
         return
 
     def classify_by_date(self, date_format, output, directory):
@@ -204,6 +205,7 @@ class Classifier:
         else:
             self.classify(self.formats, output, directory)
 
+        print("Done!\n")
         return True
 
 
