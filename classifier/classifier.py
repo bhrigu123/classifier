@@ -70,8 +70,11 @@ class Classifier:
         self.parser.add_argument("-dt", "--date", action='store_true',
                                  help="Organize files by creation date")
 
-        self.args = self.parser.parse_args()
+        self.parser.add_argument("-df", "--dateformat", type=str,
+                                 help="set the date format using YYYY, MM or DD")
 
+        self.args = self.parser.parse_args()
+        self.dateformat = 'YYYY-MM-DD'
         self.formats = {}
         self.dirconf = None
         self.checkconfig()
@@ -213,7 +216,10 @@ class Classifier:
             self.dirconf = os.path.join(os.getcwd(), DIRCONFFILE)
 
         if self.args.date:
-            self.classify_by_date('YYYY-MM-DD', output, directory)
+            if self.args.dateformat:
+                self.classify_by_date(self.args.dateformat, output, directory)
+            else:
+                self.classify_by_date(self.dateformat, output, directory)
         elif os.path.isfile(self.dirconf):
             print('Found config in current directory')
             if self.args.output:
