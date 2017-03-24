@@ -20,6 +20,7 @@ import sys
 from xdg.BaseDirectory import xdg_config_dirs
 
 VERSION = 'Classifier 1.99dev'
+DIRCONFFILE = '.classifier.conf'
 OS = os.name
 if OS == 'nt':
     CONFIG = os.getenv('userprofile') + '/classifier.conf'
@@ -72,6 +73,7 @@ class Classifier:
         self.args = self.parser.parse_args()
 
         self.formats = {}
+        self.dirconf = None
         self.checkconfig()
         self.main()
 
@@ -101,40 +103,43 @@ class Classifier:
     def moveto(self, filename, from_folder, to_folder):
         from_file = os.path.join(from_folder, filename)
         to_file = os.path.join(to_folder, filename)
-
         # to move only files, not folders
-        if os.path.isfile(from_file):
-            if not os.path.exists(to_folder):
-                os.makedirs(to_folder)
-            os.rename(from_file, to_file)
+        if not to_file == from_file:
+            print('  moving:', to_file)
+            if os.path.isfile(from_file):
+                if not os.path.exists(to_folder):
+                    os.makedirs(to_folder)
+                os.rename(from_file, to_file)
         return
 
     def classify(self, formats, output, directory):
-        print("\nScanning Folder: " + directory + "\n")
-
         for file in os.listdir(directory):
             tmpbreak = False
             # set up a config per folder
-            if not file == '.classifier.conf' and os.path.isfile(file):
+            if not file == DIRCONFFILE and os.path.isfile(os.path.join(directory, file)):
                 filename, file_ext = os.path.splitext(file)
                 file_ext = file_ext.lower()
-                if self.formats['IGNORE']:
-                    for ignored in self.formats['IGNORE'].split(','):
-                        if file_ext == ignored:
-                            print('Ignoring:', file)
-                            tmpbreak = True
+                if len(self.formats) > 1:
+                    if self.formats['IGNORE']:
+                        for ignored in self.formats['IGNORE'].replace('\n', '').split(','):
+                            if file_ext == ignored:
+                                tmpbreak = True
                 if not tmpbreak:
                     for folder, ext_list in list(formats.items()):
                         # never move files in the ignore list
                         if not folder == 'IGNORE':
                             folder = os.path.join(output, folder)
-
-                            if file_ext in ext_list:
-                                try:
-                                    self.moveto(file, directory, folder)
-                                except Exception as e:
-                                    print('Cannot move file - {} - {}'.format(file, str(e)))
+                            # make sure we are passing a list to the extension checker
+                            if type(ext_list) == str:
+                                ext_list = ext_list.split(',')
+                            for tmp_ext in ext_list:
+                                if file_ext == tmp_ext:
+                                    try:
+                                        self.moveto(file, directory, folder)
+                                    except Exception as e:
+                                        print('Cannot move file - {} - {}'.format(file, str(e)))
             elif os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
+                #print("\n Checking: " + os.path.join(directory, file))
                 self.classify(self.formats, output, os.path.join(directory, file))
 
         return
@@ -200,9 +205,33 @@ class Classifier:
                 in the -d path only after classifying '''
                 output = directory
 
+        # Check for a config file in the source file directory
+        if self.args.directory:
+            if os.path.isfile(os.path.join(self.args.directory, DIRCONFFILE)):
+                self.dirconf = os.path.join(self.args.directory, DIRCONFFILE)
+        elif os.path.isfile(os.path.join(os.getcwd(), DIRCONFFILE)):
+            self.dirconf = os.path.join(os.getcwd(), DIRCONFFILE)
+
         if self.args.date:
             self.classify_by_date('YYYY-MM-DD', output, directory)
+        elif os.path.isfile(self.dirconf):
+            print('Found config in current directory')
+            if self.args.output:
+                print('Your output directory is being ignored!!!')
+            for items in open(self.dirconf, "r"):
+                # reset formats for individual folders
+                self.formats = {}
+                (key, dst, val) = items.split(':')
+                self.formats[key] = val.replace('\n', '').split(',')
+                print("\nScanning:  " + directory +
+                      "\nFor:       " + key +
+                      '\nRecursive: ' + str(self.args.recursive) +
+                      '\nFormats:   ' + val)
+                self.classify(self.formats, dst, directory)
         else:
+            print("\nScanning Folder: " + directory +
+                  "\nFor: " + str(self.formats.items()) +
+                  '\nRecursive: ' + str(self.args.recursive))
             self.classify(self.formats, output, directory)
 
         print("Done!\n")

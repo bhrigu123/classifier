@@ -1,12 +1,24 @@
 # News
-This is a fork to update classifier mailnly for my own uses but to also address some of the issues people have reported and haven't been fixed yet.
+This is a fork to update classifier mainly for my own uses but to also address some of the issues people have reported and haven't been fixed yet.
 
 DONE: Enable config saving to a master file
+DONE: Enable recursive search.
+
+# DONE: Individual folder config for paths and destinations
+Individual folders can have their own configs now. Save the file as ".classifier.conf" inside the directory you want to maintain.
+This will search for one type of file per line in the following format: [destination_folder]:[base_dir]:[file_extensions]
+
+Example:
+pictures:/home/user:.png,.jpeg,.gif,.jpg,.bmp,.svg,.webp,.psd,.tiff
+archives:/home/user:.rar,.zip,.7z,.gz,.bz2,.tar,.dmg,.tgz,.xz,.iso,.cpio
+documents:/home/user:.txt,.pdf,.doc,.docx,.odf,.xls,.xlsv,.xlsx,.ppt,.pptx,.ppsx,.odp,.odt,.ods,.md,.json,.csv
+
+pictures will be moved to /home/user/pictures
+archives will be moved to /home/user/archives
+documents will be moved to /home/user/documents
 
 # TODO
-* Individual folder config for paths and destinations
-* Enable recursive search.
-* Remove dependancies on arrow
+* Remove dependencies on arrow
 
 # Classifier
 Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
@@ -71,15 +83,23 @@ Downloads
 ##Options
 `classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]`
 
-	-h --help		show help message and exit
-	-v --version		show version, filename and exit
-	-et --edittypes		Edit the list of types and formats
-	-t --types		Show the current list of types and formats
-	-dt --date		Classify the files by their Creation Date
-	-st --specific-types	Move the specific file extensions into the Specific Folder
-	-sf --specific-folder	Folder to move files with Specific Type
-	-d --directory		The directory whose files you want to classify
-	-o --output		Main directory to put organized folders
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show version, filename and exit
+  -et, --edittypes      Edit the list of types and formats
+  -t, --types           Show the current list of types and formats
+  -r, --recursive       Search the source folder recursively for files
+  -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
+                        Move all file extensions, given in the args list, in
+                        the current directory into the Specific Folder
+  -sf SPECIFIC_FOLDER, --specific-folder SPECIFIC_FOLDER
+                        Folder to move Specific File Type
+  -o OUTPUT, --output OUTPUT
+                        Main directory to put organized folders
+  -d DIRECTORY, --directory DIRECTORY
+                        The directory whose files to classify
+  -dt, --date           Organize files by creation date
+
 
 ###Example
 ######Classify specific file types
