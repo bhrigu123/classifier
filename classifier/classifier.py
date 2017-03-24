@@ -4,6 +4,7 @@
 
     ----------------Authors----------------
     Bhrigu Srivastava <captain.bhrigu@gmail.com>
+    Lachlan de Waard <lachlan.00@gmail.com>
     ----------------Licence----------------
     The MIT License [https://opensource.org/licenses/MIT]
     Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
@@ -13,9 +14,17 @@
 import argparse
 import arrow
 import os
+import subprocess
 import sys
 
+from xdg.BaseDirectory import xdg_config_dirs
+
 VERSION = 'Classifier 1.99dev'
+OS = os.name
+if OS == 'nt':
+    CONFIG = os.getenv('userprofile') + '/mytag.conf'
+elif OS == 'posix':
+    CONFIG = xdg_config_dirs[0] + '/classifier.conf'
 
 
 class Classifier:
@@ -35,6 +44,12 @@ class Classifier:
         self.parser.add_argument("-v", "--version", action='store_true',
                                  help="show version, filename and exit")
 
+        self.parser.add_argument("-et", "--edittypes", action='store_true',
+                                 help="Edit the list of types and formats")
+
+        self.parser.add_argument("-t", "--types", action='store_true',
+                                 help="Show the current list of types and formats")
+
         self.parser.add_argument("-st", "--specific-types", type=str, nargs='+',
                                  help="Move all file extensions, given in the args list, " +
                                       "in the current directory into the Specific Folder")
@@ -53,19 +68,31 @@ class Classifier:
 
         self.args = self.parser.parse_args()
 
-        self.formats = {
-            'Music': ['.mp3', '.aac', '.flac', '.ogg', '.wma', '.m4a', '.aiff', '.wav', '.amr'],
-            'Videos': ['.flv', '.ogv', '.avi', '.mp4', '.mpg', '.mpeg', '.3gp', '.mkv', '.ts', '.webm', '.vob', '.wmv'],
-            'Pictures': ['.png', '.jpeg', '.gif', '.jpg', '.bmp', '.svg', '.webp', '.psd', '.tiff'],
-            'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
-            'Documents': ['.txt', '.pdf', '.doc', '.docx', '.odf', '.xls', '.xlsv', '.xlsx',
-                          '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-            'Books': ['.mobi', '.epub', '.chm'],
-            'DEBPackages': ['.deb'],
-            'Programs': ['.exe', '.msi'],
-            'RPMPackages': ['.rpm']
-        }
+        self.formats = {}
+        self.checkconfig()
         self.main()
+
+    def checkconfig(self):
+        """ create a default config if not available """
+        if not os.path.isdir(os.path.dirname(CONFIG)):
+            os.makedirs(os.path.dirname(CONFIG))
+        if not os.path.isfile(CONFIG):
+            conffile = open(CONFIG, "w")
+            conffile.write("Music:[.mp3,.aac,.flac,.ogg,.wma,.m4a,.aiff,.wav,.amr]\n" +
+                           "Videos:[.flv,.ogv,.avi,.mp4,.mpg,.mpeg,.3gp,.mkv,.ts,.webm,.vob,.wmv]\n" +
+                           "Pictures:[.png,.jpeg,.gif,.jpg,.bmp,.svg,.webp,.psd,.tiff]\n" +
+                           "Archives:[.rar,.zip,.7z,.gz,.bz2,.tar,.dmg,.tgz,.xz,.iso,.cpio]\n" +
+                           "Documents:[.txt,.pdf,.doc,.docx,.odf,.xls,.xlsv,.xlsx," +
+                           ".ppt,.pptx,.ppsx,.odp,.odt,.ods,.md,.json,.csv]\n" +
+                           "Books:[.mobi,.epub,.chm]\n" +
+                           "DEBPackages:[.deb]\n" +
+                           "Programs:[.exe,.msi]\n" +
+                           "RPMPackages:[.rpm]")
+            conffile.close()
+        for items in open(CONFIG, "r"):
+            (key, val) = items.split(':')
+            self.formats[key] = val
+        return
 
     def moveto(self, filename, from_folder, to_folder):
         from_file = os.path.join(from_folder, filename)
@@ -126,7 +153,16 @@ class Classifier:
 
     def main(self):
         if self.args.version:
+            # Show version information and quit
             print(VERSION + '\n' + os.path.realpath(__file__))
+            return False
+        if self.args.types:
+            # Show file format information then quit
+            for key, value in self.formats.items():
+                print(key, '\n', value)
+            return False
+        if self.args.edittypes:
+            subprocess.Popen(['xdg-open', CONFIG])
             return False
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
             print(

@@ -1,8 +1,10 @@
 # News
 This is a fork to update classifier mailnly for my own uses but to also address some of the issues people have reported and haven't been fixed yet.
 
+DONE: Enable config saving to a master file
+
 # TODO
-* Enable config saving for individual folders and possibly a master file
+* Individual folder config for paths and destinations
 * Enable recursive search.
 * Remove dependancies on arrow
 
@@ -69,12 +71,15 @@ Downloads
 ##Options
 `classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]`
 
-	-h --help				show help message and exit
-	-dt --date				Classify the files by their Creation Date
+	-h --help		show help message and exit
+	-v --version		show version, filename and exit
+	-et --edittypes		Edit the list of types and formats
+	-t --types		Show the current list of types and formats
+	-dt --date		Classify the files by their Creation Date
 	-st --specific-types	Move the specific file extensions into the Specific Folder
 	-sf --specific-folder	Folder to move files with Specific Type
-	-d --directory				The directory whose files you want to classify
-	-o --output				Main directory to put organized folders
+	-d --directory		The directory whose files you want to classify
+	-o --output		Main directory to put organized folders
 
 ###Example
 ######Classify specific file types
