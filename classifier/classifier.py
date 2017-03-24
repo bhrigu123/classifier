@@ -50,6 +50,9 @@ class Classifier:
         self.parser.add_argument("-t", "--types", action='store_true',
                                  help="Show the current list of types and formats")
 
+        self.parser.add_argument("-r", "--recursive", action='store_true',
+                                 help="Show the current list of types and formats")
+
         self.parser.add_argument("-st", "--specific-types", type=str, nargs='+',
                                  help="Move all file extensions, given in the args list, " +
                                       "in the current directory into the Specific Folder")
@@ -78,17 +81,17 @@ class Classifier:
             os.makedirs(os.path.dirname(CONFIG))
         if not os.path.isfile(CONFIG):
             conffile = open(CONFIG, "w")
-            conffile.write("IGNORE:[.part,.desktop]\n" +
-                           "Music:[.mp3,.aac,.flac,.ogg,.wma,.m4a,.aiff,.wav,.amr]\n" +
-                           "Videos:[.flv,.ogv,.avi,.mp4,.mpg,.mpeg,.3gp,.mkv,.ts,.webm,.vob,.wmv]\n" +
-                           "Pictures:[.png,.jpeg,.gif,.jpg,.bmp,.svg,.webp,.psd,.tiff]\n" +
-                           "Archives:[.rar,.zip,.7z,.gz,.bz2,.tar,.dmg,.tgz,.xz,.iso,.cpio]\n" +
-                           "Documents:[.txt,.pdf,.doc,.docx,.odf,.xls,.xlsv,.xlsx," +
-                           ".ppt,.pptx,.ppsx,.odp,.odt,.ods,.md,.json,.csv]\n" +
-                           "Books:[.mobi,.epub,.chm]\n" +
-                           "DEBPackages:[.deb]\n" +
-                           "Programs:[.exe,.msi]\n" +
-                           "RPMPackages:[.rpm]")
+            conffile.write("IGNORE:.part,.desktop\n" +
+                           "Music:.mp3,.aac,.flac,.ogg,.wma,.m4a,.aiff,.wav,.amr\n" +
+                           "Videos:.flv,.ogv,.avi,.mp4,.mpg,.mpeg,.3gp,.mkv,.ts,.webm,.vob,.wmv\n" +
+                           "Pictures:.png,.jpeg,.gif,.jpg,.bmp,.svg,.webp,.psd,.tiff\n" +
+                           "Archives:.rar,.zip,.7z,.gz,.bz2,.tar,.dmg,.tgz,.xz,.iso,.cpio\n" +
+                           "Documents:.txt,.pdf,.doc,.docx,.odf,.xls,.xlsv,.xlsx," +
+                           ".ppt,.pptx,.ppsx,.odp,.odt,.ods,.md,.json,.csv\n" +
+                           "Books:.mobi,.epub,.chm\n" +
+                           "DEBPackages:.deb\n" +
+                           "Programs:.exe,.msi\n" +
+                           "RPMPackages:.rpm")
             conffile.close()
         for items in open(CONFIG, "r"):
             (key, val) = items.split(':')
@@ -107,7 +110,7 @@ class Classifier:
         return
 
     def classify(self, formats, output, directory):
-        print("Scanning Folder: " + directory +  "\n")
+        print("\nScanning Folder: " + directory + "\n")
 
         for file in os.listdir(directory):
             tmpbreak = False
@@ -116,8 +119,9 @@ class Classifier:
                 filename, file_ext = os.path.splitext(file)
                 file_ext = file_ext.lower()
                 if self.formats['IGNORE']:
-                    for ignored in self.formats['IGNORE'].replace("[", "").replace("]", "").split(','):
+                    for ignored in self.formats['IGNORE'].split(','):
                         if file_ext == ignored:
+                            print('Ignoring:', file)
                             tmpbreak = True
                 if not tmpbreak:
                     for folder, ext_list in list(formats.items()):
@@ -128,6 +132,8 @@ class Classifier:
                                 self.moveto(file, directory, folder)
                             except Exception as e:
                                 print('Cannot move file - {} - {}'.format(file, str(e)))
+            if os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
+                self.classify(self.formats, output, os.path.join(directory, file))
 
         print("Done!\n")
         return
