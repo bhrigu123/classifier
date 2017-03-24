@@ -22,7 +22,7 @@ from xdg.BaseDirectory import xdg_config_dirs
 VERSION = 'Classifier 1.99dev'
 OS = os.name
 if OS == 'nt':
-    CONFIG = os.getenv('userprofile') + '/mytag.conf'
+    CONFIG = os.getenv('userprofile') + '/classifier.conf'
 elif OS == 'posix':
     CONFIG = xdg_config_dirs[0] + '/classifier.conf'
 
@@ -78,7 +78,8 @@ class Classifier:
             os.makedirs(os.path.dirname(CONFIG))
         if not os.path.isfile(CONFIG):
             conffile = open(CONFIG, "w")
-            conffile.write("Music:[.mp3,.aac,.flac,.ogg,.wma,.m4a,.aiff,.wav,.amr]\n" +
+            conffile.write("IGNORE:[.part,.desktop]\n" +
+                           "Music:[.mp3,.aac,.flac,.ogg,.wma,.m4a,.aiff,.wav,.amr]\n" +
                            "Videos:[.flv,.ogv,.avi,.mp4,.mpg,.mpeg,.3gp,.mkv,.ts,.webm,.vob,.wmv]\n" +
                            "Pictures:[.png,.jpeg,.gif,.jpg,.bmp,.svg,.webp,.psd,.tiff]\n" +
                            "Archives:[.rar,.zip,.7z,.gz,.bz2,.tar,.dmg,.tgz,.xz,.iso,.cpio]\n" +
@@ -106,24 +107,29 @@ class Classifier:
         return
 
     def classify(self, formats, output, directory):
-        print("Scanning Files")
+        print("Scanning Folder: " + directory +  "\n")
 
         for file in os.listdir(directory):
+            tmpbreak = False
             # set up a config per folder
-            if not file == '.classify.conf':
+            if not file == '.classifier.conf' and os.path.isfile(file):
                 filename, file_ext = os.path.splitext(file)
                 file_ext = file_ext.lower()
+                if self.formats['IGNORE']:
+                    for ignored in self.formats['IGNORE'].replace("[", "").replace("]", "").split(','):
+                        if file_ext == ignored:
+                            tmpbreak = True
+                if not tmpbreak:
+                    for folder, ext_list in list(formats.items()):
+                        folder = os.path.join(output, folder)
 
-                for folder, ext_list in list(formats.items()):
-                    folder = os.path.join(output, folder)
+                        if file_ext in ext_list:
+                            try:
+                                self.moveto(file, directory, folder)
+                            except Exception as e:
+                                print('Cannot move file - {} - {}'.format(file, str(e)))
 
-                    if file_ext in ext_list:
-                        try:
-                            self.moveto(file, directory, folder)
-                        except Exception as e:
-                            print('Cannot move file - {} - {}'.format(file, str(e)))
-
-        print("Done!")
+        print("Done!\n")
         return
 
     def classify_by_date(self, date_format, output, directory):
