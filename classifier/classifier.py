@@ -20,10 +20,12 @@ from xdg.BaseDirectory import xdg_config_dirs
 
 VERSION = 'Classifier 1.99dev'
 DIRCONFFILE = '.classifier.conf'
-OS = os.name
-if OS == 'nt':
+PLATFORM = sys.platform
+if PLATFORM == 'darwin':
+    CONFIG = os.path.join(os.path.expanduser('~'), '.classifier.conf')
+elif PLATFORM == 'nt':
     CONFIG = os.getenv('userprofile') + '/classifier.conf'
-elif OS == 'posix':
+elif PLATFORM == 'linux':
     CONFIG = xdg_config_dirs[0] + '/classifier.conf'
 
 def main():
@@ -186,7 +188,12 @@ class Classifier:
                 print(key, '\n', value)
             return False
         if self.args.edittypes:
-            subprocess.Popen(['xdg-open', CONFIG])
+            if PLATFORM == 'darwin':
+                subprocess.call(('open', CONFIG))
+            elif PLATFORM == 'nt':
+                os.startfile(CONFIG)
+            elif PLATFORM == 'linux':
+                subprocess.Popen(['xdg-open', CONFIG])
             return False
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
             print(

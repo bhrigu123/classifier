@@ -88,7 +88,9 @@ optional arguments:
   -v, --version         show version, filename and exit
   -et, --edittypes      Edit the list of types and formats
   -t, --types           Show the current list of types and formats
-  -r, --recursive       Search the source folder recursively for files
+  -r, --recursive       Recursively search your source directory.
+                        WARNING: Ensure you use the correct path as this
+                        WILL move all files from your selected types.
   -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
                         Move all file extensions, given in the args list, in
                         the current directory into the Specific Folder
