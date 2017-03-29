@@ -14,8 +14,7 @@ setup(
              classifier = classifier.classifier:main
         """,
         install_requires=[
-            'arrow',
-            'pyxdg'
+            'arrow'
         ],
         zip_safe=False
 )

@@ -16,20 +16,21 @@ import os
 import subprocess
 import sys
 
-from xdg.BaseDirectory import xdg_config_dirs
 
 VERSION = 'Classifier 1.99dev'
 DIRCONFFILE = '.classifier.conf'
 PLATFORM = sys.platform
 if PLATFORM == 'darwin':
-    CONFIG = os.path.join(os.path.expanduser('~'), '.classifier.conf')
+    CONFIG = os.path.join(os.path.expanduser('~'), '.classifier-master.conf')
 elif PLATFORM == 'nt':
-    CONFIG = os.getenv('userprofile') + '/classifier.conf'
+    CONFIG = os.path.join(os.getenv('userprofile'), 'classifier-master.conf')
 elif PLATFORM == 'linux':
-    CONFIG = xdg_config_dirs[0] + '/classifier.conf'
+    CONFIG = os.path.join(os.getenv('HOME'), '.classifier-master.conf')
+
 
 def main():
     Classifier()
+
 
 class Classifier:
     """
@@ -147,7 +148,6 @@ class Classifier:
                                     except Exception as e:
                                         print('Cannot move file - {} - {}'.format(file, str(e)))
             elif os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
-                #print("\n Checking: " + os.path.join(directory, file))
                 self.classify(self.formats, output, os.path.join(directory, file))
 
         return
