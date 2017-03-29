@@ -15,7 +15,7 @@ setup(
         """,
         install_requires=[
             'arrow',
-            'xdg'
+            'pyxdg'
         ],
         zip_safe=False
 )

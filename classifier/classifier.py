@@ -4,7 +4,6 @@
 
     ----------------Authors----------------
     Bhrigu Srivastava <captain.bhrigu@gmail.com>
-    Lachlan de Waard <lachlan.00@gmail.com>
     ----------------Licence----------------
     The MIT License [https://opensource.org/licenses/MIT]
     Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
@@ -27,6 +26,8 @@ if OS == 'nt':
 elif OS == 'posix':
     CONFIG = xdg_config_dirs[0] + '/classifier.conf'
 
+def main():
+    Classifier()
 
 class Classifier:
     """
@@ -52,7 +53,9 @@ class Classifier:
                                  help="Show the current list of types and formats")
 
         self.parser.add_argument("-r", "--recursive", action='store_true',
-                                 help="Show the current list of types and formats")
+                                 help="Recursively search your source directory. " +
+                                 "WARNING: Ensure you use the correct path as this " +
+                                 "WILL move all files from your selected types.")
 
         self.parser.add_argument("-st", "--specific-types", type=str, nargs='+',
                                  help="Move all file extensions, given in the args list, " +
@@ -78,7 +81,7 @@ class Classifier:
         self.formats = {}
         self.dirconf = None
         self.checkconfig()
-        self.main()
+        self.run()
 
     def checkconfig(self):
         """ create a default config if not available """
@@ -98,9 +101,10 @@ class Classifier:
                            "Programs:.exe,.msi\n" +
                            "RPMPackages:.rpm")
             conffile.close()
-        for items in open(CONFIG, "r"):
-            (key, val) = items.split(':')
-            self.formats[key] = val
+        with open(CONFIG, 'r') as file:
+            for items in file:
+                (key, val) = items.replace('\n', '').split(':')
+                self.formats[key] = val
         return
 
     def moveto(self, filename, from_folder, to_folder):
@@ -122,11 +126,10 @@ class Classifier:
             if not file == DIRCONFFILE and os.path.isfile(os.path.join(directory, file)):
                 filename, file_ext = os.path.splitext(file)
                 file_ext = file_ext.lower()
-                if len(self.formats) > 1:
-                    if self.formats['IGNORE']:
-                        for ignored in self.formats['IGNORE'].replace('\n', '').split(','):
-                            if file_ext == ignored:
-                                tmpbreak = True
+                if 'IGNORE' in self.formats:
+                    for ignored in self.formats['IGNORE'].replace('\n', '').split(','):
+                        if file_ext == ignored:
+                            tmpbreak = True
                 if not tmpbreak:
                     for folder, ext_list in list(formats.items()):
                         # never move files in the ignore list
@@ -172,7 +175,7 @@ class Classifier:
             arg = self._format_text_arg(arg)
         return arg
 
-    def main(self):
+    def run(self):
         if self.args.version:
             # Show version information and quit
             print(VERSION + '\n' + os.path.realpath(__file__))
@@ -220,20 +223,24 @@ class Classifier:
                 self.classify_by_date(self.args.dateformat, output, directory)
             else:
                 self.classify_by_date(self.dateformat, output, directory)
-        elif os.path.isfile(self.dirconf):
+        elif self.dirconf and os.path.isfile(self.dirconf):
             print('Found config in current directory')
             if self.args.output:
                 print('Your output directory is being ignored!!!')
             for items in open(self.dirconf, "r"):
                 # reset formats for individual folders
                 self.formats = {}
-                (key, dst, val) = items.split(':')
-                self.formats[key] = val.replace('\n', '').split(',')
-                print("\nScanning:  " + directory +
-                      "\nFor:       " + key +
-                      '\nRecursive: ' + str(self.args.recursive) +
-                      '\nFormats:   ' + val)
-                self.classify(self.formats, dst, directory)
+                try:
+                    (key, dst, val) = items.split(':')
+                    self.formats[key] = val.replace('\n', '').split(',')
+                    print("\nScanning:  " + directory +
+                          "\nFor:       " + key +
+                          '\nRecursive: ' + str(self.args.recursive) +
+                          '\nFormats:   ' + val)
+                    self.classify(self.formats, dst, directory)
+                except ValueError:
+                    print("Your local config file is malformed. Please check and try again.")
+                    return False
         else:
             print("\nScanning Folder: " + directory +
                   "\nFor: " + str(self.formats.items()) +
@@ -244,4 +251,4 @@ class Classifier:
         return True
 
 
-Classifier()
+main()
