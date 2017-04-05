@@ -72,7 +72,7 @@ optional arguments:
 	-o --output				Main directory to put organized folders
 
 
-> More options (given [below](https://github.com/bhrigu123/classifier/blob/master/README.md#coming-soon---config-file-and-other-options) coming soon.
+> More options (given [below](https://github.com/bhrigu123/classifier/blob/master/README.md#coming-soon---config-file-and-other-options) ) coming soon.
 
 ### Example
 ###### Classify specific file types
