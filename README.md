@@ -23,7 +23,7 @@ $ classifier
 ```
 
 ## Example
-###Before:
+### Before:
 ```
 Downloads
 │   ├── project.docx
@@ -37,7 +37,7 @@ Downloads
 │   └── archive.7z
 ```
 
-###After:
+### After:
 ```
 Downloads
 │   ├── Music
@@ -59,10 +59,11 @@ Downloads
 ```
 
 
-##Options
+## Options
 `classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]`
 
 optional arguments:
+
   -h, --help            show this help message and exit
   -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
                         Move all file extensions, given in the args list, in
