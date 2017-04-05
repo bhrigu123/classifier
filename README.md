@@ -64,6 +64,7 @@ Downloads
 
 optional arguments:
 
+```
   -h, --help            show this help message and exit
   -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
                         Move all file extensions, given in the args list, in
@@ -75,7 +76,7 @@ optional arguments:
   -d DIRECTORY, --directory DIRECTORY
                         The directory whose files to classify
   -dt, --date           Organize files by creation date
-
+```
 
 > More options (given below) coming soon.
 
@@ -120,7 +121,8 @@ Workspace
 This classifies the directory /home/source.
 
 
-#### Config file and other options coming soon:
+
+### Coming soon - Config file and other options
 ```
 -v, --version         show version, filename and exit
 -et, --edittypes      Edit the list of types and formats
