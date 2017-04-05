@@ -101,7 +101,7 @@ def main():
         'Archives': ['.rar', '.zip', '.7z', '.gz', '.bz2', '.tar', '.dmg', '.tgz', '.xz', '.iso', '.cpio'],
         'Documents': ['.txt', '.pdf', '.doc', '.docx','.odf', '.xls', '.xlsv', '.xlsx',
                               '.ppt', '.pptx', '.ppsx', '.odp', '.odt', '.ods', '.md', '.json', '.csv'],
-        'Books': ['.mobi', '.epub', '.chm'],
+        'Books': ['.mobi', '.epub', '.chm', 'azw', 'azw3', 'azw4', 'cbz', 'cbr', 'chm', 'djvu', 'fb2', 'oeb', 'lit', 'lrf', 'pdb', 'pmlz', 'snb', 'tcr'],
         'DEBPackages': ['.deb'],
         'Programs': ['.exe', '.msi'],
         'RPMPackages': ['.rpm']
