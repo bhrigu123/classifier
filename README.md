@@ -1,24 +1,3 @@
-# News
-This is a fork to update classifier mainly for my own uses but to also address some of the issues people have reported and haven't been fixed yet.
-
-DONE: Enable config saving to a master file
-DONE: Enable recursive search.
-
-# DONE: Individual folder config for paths and destinations
-Individual folders can have their own configs now. Save the file as ".classifier.conf" inside the directory you want to maintain.
-This will search for one type of file per line in the following format: [destination_folder]:[base_dir]:[file_extensions]
-
-Example:
-pictures:/home/user:.png,.jpeg,.gif,.jpg,.bmp,.svg,.webp,.psd,.tiff
-archives:/home/user:.rar,.zip,.7z,.gz,.bz2,.tar,.dmg,.tgz,.xz,.iso,.cpio
-documents:/home/user:.txt,.pdf,.doc,.docx,.odf,.xls,.xlsv,.xlsx,.ppt,.pptx,.ppsx,.odp,.odt,.ods,.md,.json,.csv
-
-pictures will be moved to /home/user/pictures
-archives will be moved to /home/user/archives
-documents will be moved to /home/user/documents
-
-# TODO
-* Remove dependencies on arrow
 
 # Classifier
 Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
@@ -85,12 +64,6 @@ Downloads
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v, --version         show version, filename and exit
-  -et, --edittypes      Edit the list of types and formats
-  -t, --types           Show the current list of types and formats
-  -r, --recursive       Recursively search your source directory.
-                        WARNING: Ensure you use the correct path as this
-                        WILL move all files from your selected types.
   -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
                         Move all file extensions, given in the args list, in
                         the current directory into the Specific Folder
@@ -103,11 +76,13 @@ optional arguments:
   -dt, --date           Organize files by creation date
 
 
-###Example
-######Classify specific file types
+> More options (given below) coming soon.
+
+### Example
+###### Classify specific file types
 `classifier -st .py .pyc -sf "Python Files"`
 
-###Before
+### Before
 ```
 Workspace
 │   ├── views.py
@@ -118,7 +93,7 @@ Workspace
 ```
 
 
-###After
+### After
 ```
 Workspace
 │   ├── Python Files
@@ -131,12 +106,12 @@ Workspace
 
 ```
 
-###Example
-######Classify by Date:
+### Example
+###### Classify by Date:
 `classifier -dt`
 
-###Example
-######Classify files of directory '/home/source' and put them in location '/home/dest':
+### Example
+###### Classify files of directory '/home/source' and put them in location '/home/dest':
 `classifier -d /home/source -o /home/dest`
 
 `Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory and  the classified folders be in that source directory only. Eg:<br>
@@ -144,6 +119,15 @@ Workspace
 This classifies the directory /home/source.
 
 
+#### Config file and other options coming soon:
+```
+-v, --version         show version, filename and exit
+-et, --edittypes      Edit the list of types and formats
+-t, --types           Show the current list of types and formats
+-r, --recursive       Recursively search your source directory.
+                        WARNING: Ensure you use the correct path as this
+                        WILL move all files from your selected types.
+```
 
 ======
 
