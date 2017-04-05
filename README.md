@@ -64,19 +64,13 @@ Downloads
 
 optional arguments:
 
-```
-  -h, --help            show this help message and exit
-  -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
-                        Move all file extensions, given in the args list, in
-                        the current directory into the Specific Folder
-  -sf SPECIFIC_FOLDER, --specific-folder SPECIFIC_FOLDER
-                        Folder to move Specific File Type
-  -o OUTPUT, --output OUTPUT
-                        Main directory to put organized folders
-  -d DIRECTORY, --directory DIRECTORY
-                        The directory whose files to classify
-  -dt, --date           Organize files by creation date
-```
+	-h --help				  show help message and exit
+	-dt --date				Classify the files by their Creation Date
+	-st --specific-types	Move the specific file extensions into the Specific Folder
+	-sf --specific-folder	Folder to move files with Specific Type
+	-d --directory				The directory whose files you want to classify
+	-o --output				Main directory to put organized folders
+
 
 > More options (given below) coming soon.
 
