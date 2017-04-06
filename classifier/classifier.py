@@ -20,12 +20,16 @@ import sys
 VERSION = 'Classifier 1.99dev'
 DIRCONFFILE = '.classifier.conf'
 PLATFORM = sys.platform
+OS = os.name
+
 if PLATFORM == 'darwin':
     CONFIG = os.path.join(os.path.expanduser('~'), '.classifier-master.conf')
-elif PLATFORM == 'nt':
+elif PLATFORM == 'win32' or OS == 'nt':
     CONFIG = os.path.join(os.getenv('userprofile'), 'classifier-master.conf')
-elif PLATFORM == 'linux':
+elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
     CONFIG = os.path.join(os.getenv('HOME'), '.classifier-master.conf')
+else:
+    CONFIG = os.path.join(os.getcwd(), '.classifier-master.conf')
 
 
 def main():
@@ -168,6 +172,7 @@ class Classifier:
         return
 
     def _format_text_arg(self, arg):
+        """ Set a date format to name your folders"""
         if not isinstance(arg, str):
             arg = arg.decode('utf-8')
         return arg
@@ -190,9 +195,9 @@ class Classifier:
         if self.args.edittypes:
             if PLATFORM == 'darwin':
                 subprocess.call(('open', CONFIG))
-            elif PLATFORM == 'nt':
+            elif PLATFORM == 'win32' or OS == 'nt':
                 os.startfile(CONFIG)
-            elif PLATFORM == 'linux':
+            elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix'
                 subprocess.Popen(['xdg-open', CONFIG])
             return False
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
