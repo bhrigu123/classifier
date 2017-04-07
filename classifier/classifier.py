@@ -197,7 +197,7 @@ class Classifier:
                 subprocess.call(('open', CONFIG))
             elif PLATFORM == 'win32' or OS == 'nt':
                 os.startfile(CONFIG)
-            elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix'
+            elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
                 subprocess.Popen(['xdg-open', CONFIG])
             return False
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
