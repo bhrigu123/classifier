@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 """ Classifier
-
-    ----------------Authors----------------
+    ----------------Contributors----------------
+    https://github.com/bhrigu123/classifier/graphs/contributors
+    ----------------Maintainer----------------
     Bhrigu Srivastava <captain.bhrigu@gmail.com>
-    ----------------Licence----------------
+    ----------------License----------------
     The MIT License [https://opensource.org/licenses/MIT]
     Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
 
@@ -262,5 +263,3 @@ class Classifier:
         print("Done!\n")
         return True
 
-
-main()
