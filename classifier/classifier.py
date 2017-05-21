@@ -18,7 +18,7 @@ import subprocess
 import sys
 
 
-VERSION = 'Classifier 1.99dev'
+VERSION = 'Classifier 2.0'
 DIRCONFFILE = '.classifier.conf'
 PLATFORM = sys.platform
 OS = os.name
@@ -208,7 +208,7 @@ class Classifier:
 
         if self.args.edittypes:
             if PLATFORM == 'darwin':
-                subprocess.call(('open', CONFIG))
+                subprocess.call(('open', '-t', CONFIG))
             elif PLATFORM == 'win32' or OS == 'nt':
                 os.startfile(CONFIG)
             elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
         name="classifier",
-        version="1.99",
+        version="2.0",
         description="Classify the files in your Downloads folder into suitable destinations.",
         url="http://github.com/bhrigu123/classifier",
         author="Bhrigu Srivastava",
