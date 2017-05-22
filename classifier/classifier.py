@@ -272,15 +272,17 @@ class Classifier:
                     self.formats[key] = val.replace('\n', '').split(',')
                     print("\nScanning:  " + directory +
                           "\nFor:       " + key +
-                          '\nRecursive: ' + str(self.args.recursive) +
                           '\nFormats:   ' + val)
                     self.classify(self.formats, dst, directory)
                 except ValueError:
                     print("Your local config file is malformed. Please check and try again.")
                     return False
         else:
-            print("\nScanning Folder: " + directory +
-                  "\nFor: " + str(self.formats.items()))
+            print("\nScanning Folder: " + directory)
+            if self.args.specific_types:
+                print("For: " + str(self.formats.items()))
+            else:
+                print("Using the default CONFIG File\n")
             self.classify(self.formats, output, directory)
 
         print("Done!\n")
