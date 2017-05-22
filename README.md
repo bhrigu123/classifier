@@ -6,6 +6,12 @@ Organize files in your current directory, by classifying them into folders of mu
 ```sh
 $ pip install classifier
 ```
+
+#### via [yaourt](https://github.com/archlinuxfr/yaourt) ([AUR](https://aur.archlinux.org/))
+```sh
+$ yaourt -S classifier-git
+```
+
 #### Compatibility
 * Python 2.7 / Python 3.4
 * Linux / OSX / Windows
