@@ -7,7 +7,7 @@
     Bhrigu Srivastava <captain.bhrigu@gmail.com>
     ----------------License----------------
     The MIT License [https://opensource.org/licenses/MIT]
-    Copyright (c) 2015 Bhrigu Srivastava http://bhrigu123.github.io
+    Copyright (c) 2015 Bhrigu Srivastava http://bhrigu.me
 
 """
 
