@@ -65,18 +65,24 @@ Downloads
 optional arguments:
 
 	-h --help				  show help message and exit
+	
 	-dt --date				Classify the files by their Creation Date
 	-st --specific-types	Move the specific file extensions into the Specific Folder
 	-sf --specific-folder	Folder to move files with Specific Type
+	
 	-d --directory				The directory whose files you want to classify
 	-o --output				Main directory to put organized folders
+	
+	-v --version         			show version, filename and exit
+	-t --types           			Show the current list of types and formats
+	-et --edittypes      			Edit the list of types and formats (edit the CONFIG)
+	
+	-rst					Reset the CONFIG file
 
-
-> More options (given [below](https://github.com/bhrigu123/classifier/blob/master/README.md#coming-soon---config-file-and-other-options) ) coming soon.
 
 ### Example
 ###### Classify specific file types
-`classifier -st .py .pyc -sf "Python Files"`
+`classifier -st py pyc -sf "Python Files"`
 
 ### Before
 ```
@@ -116,14 +122,16 @@ This classifies the directory /home/source.
 
 
 
-### Coming soon - Config file and other options
+### View the CONFIG how files will be sorted
+`classifier -t`
+
+### Edit the CONFIG, to set up manual settings for classification
+`classifier -et`
+
+### Reset the CONFIG file
+`classifier -rst`
 ```
--v, --version         show version, filename and exit
--et, --edittypes      Edit the list of types and formats
--t, --types           Show the current list of types and formats
--r, --recursive       Recursively search your source directory.
-                        WARNING: Ensure you use the correct path as this
-                        WILL move all files from your selected types.
+
 ```
 
 ======
