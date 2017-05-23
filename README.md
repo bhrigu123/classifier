@@ -64,16 +64,16 @@ Downloads
 
 optional arguments:
 
-	-h --help				  show help message and exit
+	-h --help				show help message and exit
 	
 	-dt --date				Classify the files by their Creation Date
-	-st --specific-types	Move the specific file extensions into the Specific Folder
-	-sf --specific-folder	Folder to move files with Specific Type
+	-st --specific-types			Move the specific file extensions into the Specific Folder
+	-sf --specific-folder			Folder to move files with Specific Type
 	
 	-d --directory				The directory whose files you want to classify
 	-o --output				Main directory to put organized folders
 	
-	-v --version         			show version, filename and exit
+	-v --version         			show version
 	-t --types           			Show the current list of types and formats
 	-et --edittypes      			Edit the list of types and formats (edit the CONFIG)
 	
