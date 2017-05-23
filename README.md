@@ -116,13 +116,13 @@ Workspace
 ###### Classify files of directory '/home/source' and put them in location '/home/dest':
 `classifier -d /home/source -o /home/dest`
 
-`Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory and  the classified folders be in that source directory only. Eg:<br>
+`Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory Eg:<br>
 `classifier -d /home/source'`<br>
 This classifies the directory /home/source.
 
 
 
-### View the CONFIG how files will be sorted
+### View the CONFIG, how files will be sorted
 `classifier -t`
 
 ### Edit the CONFIG, to set up manual settings for classification
