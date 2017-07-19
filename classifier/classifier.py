@@ -98,14 +98,15 @@ class Classifier:
 
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
-            conffile.write("IGNORE: part, desktop\n" +
-                           "Music: mp3, aac, flac, ogg, wma, m4a, aiff, wav, amr\n" +
-                           "Videos: flv, ogv, avi, mp4, mpg, mpeg, 3gp, mkv, ts, webm, vob, wmv\n" +
-                           "Pictures: png, jpeg, gif, jpg, bmp, svg, webp, psd, tiff\n" +
-                           "Archives: rar, zip, 7z, gz, bz2, tar, dmg, tgz, xz, iso, cpio\n" +
-                           "Documents: txt, pdf, doc, docx, odf, xls, xlsv, xlsx, " +
-                           "ppt, pptx, ppsx, odp, odt, ods, md, json, csv\n" +
-                           "Books: mobi, epub, chm\n" +
+            conffile.write("IGNORE: desktop, part\n" +
+                           "Music: aac, aiff, amr, flac, m4a, mp3, ogg, wav, wma\n" +
+                           "Videos: 3gp, avi, flv, mkv, mp4, mpeg, mpg, ogv, ts, vob, webm, wmv\n" +
+                           "Pictures: bmp, gif, jpeg, jpg, png, psd, svg, tiff, webp\n" +
+                           "Archives: 7z, bz2, cpio, dmg, gz, iso, rar, tar, tgz, xz, zip\n" +
+                           "Documents: doc, docx, odf, odp, ods, odt, pdf, " +
+                                                "ppsx, ppt, pptx, xls, xlsv, xlsx, xt\n" +
+                           "Plain Text: csv, json, md, txt\n"
+                           "Books: chm, epub, mobi\n" +
                            "DEBPackages: deb\n" +
                            "Programs: exe, msi\n" +
                            "RPMPackages: rpm")
