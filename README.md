@@ -3,7 +3,8 @@
 Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
 
 ## Installation
-```sh
+```
+#!/bin/sh
 $ pip install classifier
 ```
 #### Compatibility
@@ -63,8 +64,8 @@ Downloads
 ```
 usage: classifier.py [-h] [-v] [-e] [-t] [-r] [-s]
                      [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
-                     [-sf SPECIFIC_FOLDER] [-o OUTPUT] [-i INPUT] [-dt]
-                     [-df DATEFORMAT]
+                     [-sf SPECIFIC_FOLDER] [-o OUTPUT] [-i INPUT] [-d]
+                     [-f FORMAT]
 
 Organize files in your directory into different folders
 
@@ -75,17 +76,17 @@ optional arguments:
   -t, --types           Show the current list of types and formats
   -r, --reset           Reset the default Config file
   -s, --show-default    Show the default Config file
-  -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
+  -st, --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
                         Move all file extensions, given in the args list, in
                         the current directory into the Specific Folder
-  -sf SPECIFIC_FOLDER, --specific-folder SPECIFIC_FOLDER
+  -sf, --specific-folder SPECIFIC_FOLDER
                         Folder to move Specific File Type
-  -o OUTPUT, --output OUTPUT
+  -o, --output OUTPUT
                         Main directory to put organized folders
-  -i INPUT, --input INPUT
+  -i, --input INPUT
                         The directory whose files to classify
-  -dt, --date           Organize files by creation date
-  -df DATEFORMAT, --dateformat DATEFORMAT
+  -d, --date           Organize files by creation date
+  -f, --format DATEFORMAT
                         set the date format using YYYY, MM or DD
 ```
 
@@ -121,14 +122,14 @@ Workspace
 
 ### Example
 ###### Classify by Date:
-`classifier -dt`
+`classifier -d -i .`
 
 ### Example
 ###### Classify files of directory '/home/source' and put them in location '/home/dest':
-`classifier -d /home/source -o /home/dest`
+`classifier -i /home/source -o /home/dest`
 
-`Note: ` If -d (source directory) is given without -o (output) directory, this will classify the files of source directory Eg:<br>
-`classifier -d /home/source'`<br>
+`Note: ` If -i (source directory) is given without -o (output) directory, this will classify the files of source directory Eg:<br>
+`classifier -i /home/source'`<br>
 This classifies the directory /home/source.
 
 
@@ -137,13 +138,10 @@ This classifies the directory /home/source.
 `classifier -t`
 
 ### Edit the CONFIG, to set up manual settings for classification
-`classifier -et`
+`classifier -e`
 
 ### Reset the CONFIG file
-`classifier -rst`
-```
-
-```
+`classifier -r`
 
 ======
 
