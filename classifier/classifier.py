@@ -12,16 +12,31 @@
 """
 
 import argparse
-import arrow
 import os
 import subprocess
-import sys
+from sys import platform
 
 
 VERSION = 'Classifier 2.0'
 DIRCONFFILE = '.classifier.conf'
-PLATFORM = sys.platform
+PLATFORM = platform
 OS = os.name
+HELP = """usage: classifier [-i Directory]
+        -h, --help        Show help."""
+DEFAULT = """IGNORE: crdownload, desktop, opdownload, part, partial
+Audio: aa, aac, aiff, amr, dvf, flac, gsm, m4a, m4b, m4p, midi, mp3, msv, ogg, ra, wav, wma
+Ringtones: m4r, mmf, srt
+Videos: 3g2, 3gp, amv, avi, flv, f4a, f4p, f4v, gifv, m4p, m4v, mkv, mp2, mp4, mpeg, mpg, ogv, rm, svi, ts, vob, webm, wmv
+Pictures: bmp, bpg, gif, ico, jpeg, jpg, odg, png, psd, rgbe, svg, tiff, webp, vml
+Archives: 7z, bz2, cpio, dmg, gz, iso, lz, rar, tar, tgz, xz, zip
+Documents: ai, atom, doc, docx, kdb, kdbx, odf, odm, odp, ods, odt, pdf, ppsx, ppt, pptx, pub, qif, rtf, sxw, xls, xlsv, xlsx, xml, xt
+Webpages: asp, aspx, cgi, htm, html, xhtml
+Programming: a, c, cljs, coffee, class, d, e, el, erb, fth, go, java, js, lua, lisp, m, o, p, php, pl, pm, py, pyc, pyo, r, rb, so, tcl
+Plain Text: asc, cer, cfg, conf, crt, css, csv, ini, inf, json, log, md, pem, pub, ppk, ssh, txt, xml, yaml
+Books: chm, epub, fb2, mobi
+Packages: deb, ebuild, jar, rpm
+Programs: bat, cmd, com, exe, msi, out, sh, vbs"""
+
 
 if PLATFORM == 'darwin':
     CONFIG = os.path.join(os.path.expanduser('~'), '.classifier-master.conf')
@@ -31,11 +46,6 @@ elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
     CONFIG = os.path.join(os.getenv('HOME'), '.classifier-master.conf')
 else:
     CONFIG = os.path.join(os.getcwd(), '.classifier-master.conf')
-
-
-def main():
-    Classifier()
-
 
 class Classifier:
     """
@@ -51,23 +61,27 @@ class Classifier:
     """
 
     def __init__(self):
+        self.prog=VERSION
         self.description = "Organize files in your directory into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
 
         self.parser.add_argument("-v", "--version", action='store_true',
-                                 help="show version, filename and exit")
+                                 help="Show version and exit")
 
-        self.parser.add_argument("-et", "--edittypes", action='store_true',
+        self.parser.add_argument("-e", "--edit", action='store_true',
                                  help="Edit the list of types and formats")
 
         self.parser.add_argument("-t", "--types", action='store_true',
                                  help="Show the current list of types and formats")
 
-        self.parser.add_argument("-rst", "--reset", action='store_true',
+        self.parser.add_argument("-r", "--reset", action='store_true',
                                  help="Reset the default Config file")
+
+        self.parser.add_argument("-s", "--show-default", action='store_true',
+                                  help="Show the default Config file")
         
         """
-        self.parser.add_argument("-r", "--recursive", action='store_true',
+        self.parser.add_argument("-re", "--recursive", action='store_true',
                                  help="Recursively search your source directory. " +
                                  "WARNING: Ensure you use the correct path as this " +
                                  "WILL move all files from your selected types.")
@@ -83,7 +97,7 @@ class Classifier:
         self.parser.add_argument("-o", "--output", type=str,
                                  help="Main directory to put organized folders")
 
-        self.parser.add_argument("-d", "--directory", type=str,
+        self.parser.add_argument("-i", "--input", type=str,
                                  help="The directory whose files to classify")
 
         self.parser.add_argument("-dt", "--date", action='store_true',
@@ -101,25 +115,7 @@ class Classifier:
 
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
-            conffile.write("IGNORE: crdownload, desktop, opdownload, part, partial\n" +
-                "Audio: aa, aac, aiff, amr, dvf, flac, gsm, m4a, m4b, m4p, midi, " +
-                    "mp3, msv, ogg, ra, wav, wma\n" +
-                "Ringtones: m4r, mmf, srt\n" +
-                "Videos: 3g2, 3gp, amv, avi, flv, f4a, f4p, f4v, gifv, m4p, m4v, mkv, " +
-                    "mp2, mp4, mpeg, mpg, ogv, rm, svi, ts, vob, webm, wmv\n" +
-                "Pictures: bmp, bpg, gif, ico, jpeg, jpg, odg, png, psd, rgbe, svg, tiff, " +
-                    "webp, vml\n" +
-                "Archives: 7z, bz2, cpio, dmg, gz, iso, lz, rar, tar, tgz, xz, zip\n" +
-                "Documents: ai, atom, doc, docx, kdb, kdbx, odf, odm, odp, ods, odt, pdf, " +
-                    "ppsx, ppt, pptx, pub, qif, rtf, sxw, xls, xlsv, xlsx, xml, xt\n" +
-                "Webpages: asp, aspx, cgi, htm, html, xhtml\n" +
-                "Programming: a, c, cljs, coffee, class, d, e, el, erb, fth, go, java, js, " +
-                    "lua, lisp, m, o, p, php, pl, pm, py, pyc, pyo, r, rb, so, tcl\n" +
-                "Plain Text: asc, cer, cfg, conf, crt, css, csv, ini, inf, json, log, md, " +
-                     "pem, pub, ppk, ssh, txt, xml, yaml\n" +
-                "Books: chm, epub, fb2, mobi\n" +
-                "Packages: deb, ebuild, jar, rpm\n" +
-                "Programs: bat, cmd, com, exe, msi, out, sh, vbs\n")
+            conffile.write(DEFAULT)
         print("CONFIG file created at: "+CONFIG)
 
     def checkconfig(self):
@@ -206,6 +202,7 @@ class Classifier:
         return arg
 
     def run(self):
+        
         if self.args.version:
             # Show version information and quit
             print(VERSION)
@@ -217,7 +214,7 @@ class Classifier:
                 print(key + ': '+ value)
             return False
 
-        if self.args.edittypes:
+        if self.args.edit:
             if PLATFORM == 'darwin':
                 subprocess.call(('open', '-t', CONFIG))
             elif PLATFORM == 'win32' or OS == 'nt':
@@ -228,45 +225,39 @@ class Classifier:
 
         if self.args.reset:
             self.create_default_config()
-            return
+            return False
+
+        if self.args.show_default:
+            print(DEFAULT)
+            return False
 
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
-            print(
-                'Specific Folder and Specific Types need to be specified together')
-            sys.exit()
+            print('Specific Folder and Specific Types need to be specified together')
+            quit()
 
         if self.args.specific_folder and self.args.specific_types:
             specific_folder = self._format_arg(self.args.specific_folder)
             self.formats = {specific_folder: self.args.specific_types}
 
         if self.args.output is None:
-            output = os.getcwd()
+            output = self.args.input
         else:
             output = self._format_arg(self.args.output)
 
-        if self.args.directory is None:
-            directory = os.getcwd()
-        else:
-            directory = self._format_arg(self.args.directory)
-            if self.args.output is None:
-                ''' if -d arg given without the -o arg, keeping the files of -d
-                in the -d path only after classifying '''
-                output = directory
-
         # Check for a config file in the source file directory
-        if self.args.directory:
-            if os.path.isfile(os.path.join(self.args.directory, DIRCONFFILE)):
-                self.dirconf = os.path.join(self.args.directory, DIRCONFFILE)
-        elif os.path.isfile(os.path.join(os.getcwd(), DIRCONFFILE)):
-            self.dirconf = os.path.join(os.getcwd(), DIRCONFFILE)
+        if self.args.input and os.path.isfile(os.path.join(self.args.input, DIRCONFFILE)):
+                self.dirconf = os.path.join(self.args.input, DIRCONFFILE)
 
-        if self.args.dateformat:
-            if not self.args.date:
-                print(
-                    'Dateformat -df must be given alongwith date -dt option')
-                sys.exit()
+        if self.args.dateformat and not self.args.date:
+                print('Dateformat -df must be given alongwith date -dt option')
+                quit()
 
         if self.args.date:
+            try:
+                import arrow
+            except ImportError:
+                print("You must install arrow using 'pip install arrow' to use date formatting.")
+                return False
             if self.args.dateformat:
                 self.classify_by_date(self.args.dateformat, output, directory)
             else:
@@ -281,21 +272,30 @@ class Classifier:
                 try:
                     (key, dst, val) = items.split(':')
                     self.formats[key] = val.replace('\n', '').split(',')
-                    print("\nScanning:  " + directory +
+                    print("\nScanning:  " + input +
                           "\nFor:       " + key +
                           '\nFormats:   ' + val)
                     self.classify(self.formats, dst, directory)
                 except ValueError:
                     print("Your local config file is malformed. Please check and try again.")
                     return False
-        else:
-            print("\nScanning Folder: " + directory)
-            if self.args.specific_types:
-                print("For: " + str(self.formats.items()))
-            else:
-                print("Using the default CONFIG File\n")
-            self.classify(self.formats, output, directory)
 
-        print("Done!\n")
+        if self.args.input is None:
+            print(HELP)
+            return False
+        
+        directory = self._format_arg(self.args.input)
+        if self.args.output is None:
+            output = directory
+            
+        print("\nScanning Folder: " + directory)
+        if self.args.specific_types:
+            print("For: " + str(self.formats.items()))
+        else:
+            print("Using the default CONFIG File\n")
+        self.classify(self.formats, output, directory)
+        print("Done!")
         return True
 
+if __name__ == "__main__":
+    Classifier()

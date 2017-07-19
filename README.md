@@ -60,24 +60,34 @@ Downloads
 
 
 ## Options
-`classifier [-dt] [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]] [-sf SPECIFIC_FOLDER] [-o OUTPUT]`
+usage: classifier.py [-h] [-v] [-e] [-t] [-r] [-s]
+                     [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
+                     [-sf SPECIFIC_FOLDER] [-o OUTPUT] [-i INPUT] [-dt]
+                     [-df DATEFORMAT]
+
+Organize files in your directory into different folders
 
 optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         Show version and exit
+  -e, --edit            Edit the list of types and formats
+  -t, --types           Show the current list of types and formats
+  -r, --reset           Reset the default Config file
+  -s, --show-default    Show the default Config file
+  -st SPECIFIC_TYPES [SPECIFIC_TYPES ...], --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
+                        Move all file extensions, given in the args list, in
+                        the current directory into the Specific Folder
+  -sf SPECIFIC_FOLDER, --specific-folder SPECIFIC_FOLDER
+                        Folder to move Specific File Type
+  -o OUTPUT, --output OUTPUT
+                        Main directory to put organized folders
+  -i INPUT, --input INPUT
+                        The directory whose files to classify
+  -dt, --date           Organize files by creation date
+  -df DATEFORMAT, --dateformat DATEFORMAT
+                        set the date format using YYYY, MM or DD
 
-	-h   --help				show help message and exit
-	
-	-dt  --date				Classify the files by their Creation Date
-	-st  --specific-types			Move the specific file extensions into the Specific Folder
-	-sf  --specific-folder			Folder to move files with Specific Type
-	
-	-d   --directory			The directory whose files you want to classify
-	-o   --output				Main directory to put organized folders
-	
-	-v   --version         			show version
-	-t   --types           			Show the current list of types and formats
-	-et  --edittypes      			Edit the list of types and formats (edit the CONFIG)
-	
-	-rst --reset				Reset the CONFIG file
+
 
 
 ### Example
@@ -101,7 +111,7 @@ Workspace
 │   ├── Python Files
 │   │   ├── views.py
 │   │   ├── temp.pyc
-|   |	└── script.py
+|   |   └── script.py
 |   |
 |   ├── game.java
 |   └── index.html
