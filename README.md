@@ -12,12 +12,12 @@ $ pip install classifier
 
 
 ## Usage
-* Go to your directory, where you want to classify your files.
-* Run the following command in your terminal.
-```sh
-$ classifier
 ```
-```sh
+$ python classifier
+usage: classifier [-i Directory]
+        -h, --help        Show help.
+
+$ python classifier -i .
 >> Scanning Files
 >> Done!
 ```

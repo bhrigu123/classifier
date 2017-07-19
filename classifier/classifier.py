@@ -49,7 +49,7 @@ else:
 
 class Classifier:
     """
-    All format lists were taken from wikipedia, not all of them were added due to extensions
+    All format lists were taken from wikipedia, not all were added due to extensions
     not being exclusive to one format such as webm, or raw
     Audio           -       https://en.wikipedia.org/wiki/Audio_file_format
     Ringtones       -       https://en.wikipedia.org/wiki/Ringtone#Ring_tone_encoding_formats
@@ -100,10 +100,10 @@ class Classifier:
         self.parser.add_argument("-i", "--input", type=str,
                                  help="The directory whose files to classify")
 
-        self.parser.add_argument("-dt", "--date", action='store_true',
+        self.parser.add_argument("-d", "--date", action='store_true',
                                  help="Organize files by creation date")
 
-        self.parser.add_argument("-df", "--dateformat", type=str,
+        self.parser.add_argument("-f", "--format", type=str,
                                  help="set the date format using YYYY, MM or DD")
 
         self.args = self.parser.parse_args()
@@ -248,8 +248,8 @@ class Classifier:
         if self.args.input and os.path.isfile(os.path.join(self.args.input, DIRCONFFILE)):
                 self.dirconf = os.path.join(self.args.input, DIRCONFFILE)
 
-        if self.args.dateformat and not self.args.date:
-                print('Dateformat -df must be given alongwith date -dt option')
+        if self.args.format and not self.args.date:
+                print('Dateformat -f must be given along with date -d option')
                 quit()
 
         if self.args.date:
@@ -263,9 +263,9 @@ class Classifier:
             else:
                 self.classify_by_date(self.dateformat, output, directory)
         elif self.dirconf and os.path.isfile(self.dirconf):
-            print('Found config in current directory')
+            print('Using config in current directory')
             if self.args.output:
-                print('Your output directory is being ignored!!!')
+                print('Config in output directory is being ignored')
             for items in open(self.dirconf, "r"):
                 # reset formats for individual folders
                 self.formats = {}
