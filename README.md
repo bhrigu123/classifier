@@ -60,7 +60,7 @@ Downloads
 
 
 ## Options
-usage: classifier.py [-h] [-v] [-e] [-t] [-r] [-s]
+```usage: classifier.py [-h] [-v] [-e] [-t] [-r] [-s]
                      [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
                      [-sf SPECIFIC_FOLDER] [-o OUTPUT] [-i INPUT] [-dt]
                      [-df DATEFORMAT]
@@ -86,7 +86,7 @@ optional arguments:
   -dt, --date           Organize files by creation date
   -df DATEFORMAT, --dateformat DATEFORMAT
                         set the date format using YYYY, MM or DD
-
+```
 
 
 
