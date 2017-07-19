@@ -119,7 +119,7 @@ class Classifier:
                      "pem, pub, ppk, ssh, txt, xml, yaml\n" +
                 "Books: chm, epub, fb2, mobi\n" +
                 "Packages: deb, ebuild, jar, rpm\n" +
-                "Programs: bat, cmd, com, exe, msi, out, sh, vbs\n" +
+                "Programs: bat, cmd, com, exe, msi, out, sh, vbs\n")
         print("CONFIG file created at: "+CONFIG)
 
     def checkconfig(self):
