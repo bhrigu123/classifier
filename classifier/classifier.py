@@ -41,14 +41,17 @@ class Classifier:
     """
     All format lists were taken from wikipedia, not all of them were added due to extensions
     not being exclusive to one format such as webm, or raw
-    Audio 		- 	https://en.wikipedia.org/wiki/Audio_file_format
-    Images 		- 	https://en.wikipedia.org/wiki/Image_file_formats
-    Video 		- 	https://en.wikipedia.org/wiki/Video_file_format
-    Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
+    Audio           -       https://en.wikipedia.org/wiki/Audio_file_format
+    Ringtones       -       https://en.wikipedia.org/wiki/Ringtone#Ring_tone_encoding_formats
+    Images          -       https://en.wikipedia.org/wiki/Image_file_formats
+    Video           -       https://en.wikipedia.org/wiki/Video_file_format
+    Documents       -       https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
+                            https://en.wikipedia.org/wiki/Document_file_format
+    Others          -       https://en.wikipedia.org/wiki/List_of_file_formats
     """
 
     def __init__(self):
-        self.description = "Organize files in your directory instantly,by classifying them into different folders"
+        self.description = "Organize files in your directory into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
 
         self.parser.add_argument("-v", "--version", action='store_true',
@@ -98,18 +101,25 @@ class Classifier:
 
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
-            conffile.write("IGNORE: desktop, part\n" +
-                           "Music: aac, aiff, amr, flac, m4a, mp3, ogg, wav, wma\n" +
-                           "Videos: 3gp, avi, flv, mkv, mp4, mpeg, mpg, ogv, ts, vob, webm, wmv\n" +
-                           "Pictures: bmp, gif, jpeg, jpg, png, psd, svg, tiff, webp\n" +
-                           "Archives: 7z, bz2, cpio, dmg, gz, iso, rar, tar, tgz, xz, zip\n" +
-                           "Documents: doc, docx, odf, odp, ods, odt, pdf, " +
-                                                "ppsx, ppt, pptx, xls, xlsv, xlsx, xt\n" +
-                           "Plain Text: csv, json, md, txt\n"
-                           "Books: chm, epub, mobi\n" +
-                           "DEBPackages: deb\n" +
-                           "Programs: exe, msi\n" +
-                           "RPMPackages: rpm")
+            conffile.write("IGNORE: crdownload, desktop, opdownload, part, partial\n" +
+                "Audio: aa, aac, aiff, amr, dvf, flac, gsm, m4a, m4b, m4p, midi, " +
+                    "mp3, msv, ogg, ra, wav, wma\n" +
+                "Ringtones: m4r, mmf, srt\n" +
+                "Videos: 3g2, 3gp, amv, avi, flv, f4a, f4p, f4v, gifv, m4p, m4v, mkv, " +
+                    "mp2, mp4, mpeg, mpg, ogv, rm, svi, ts, vob, webm, wmv\n" +
+                "Pictures: bmp, bpg, gif, ico, jpeg, jpg, odg, png, psd, rgbe, svg, tiff, " +
+                    "webp, vml\n" +
+                "Archives: 7z, bz2, cpio, dmg, gz, iso, lz, rar, tar, tgz, xz, zip\n" +
+                "Documents: ai, atom, doc, docx, kdb, kdbx, odf, odm, odp, ods, odt, pdf, " +
+                    "ppsx, ppt, pptx, pub, qif, rtf, sxw, xls, xlsv, xlsx, xml, xt\n" +
+                "Webpages: asp, aspx, cgi, htm, html, xhtml\n" +
+                "Programming: a, c, cljs, coffee, class, d, e, el, erb, fth, go, java, js, " +
+                    "lua, lisp, m, o, p, php, pl, pm, py, pyc, pyo, r, rb, so, tcl\n" +
+                "Plain Text: asc, cer, cfg, conf, crt, css, csv, ini, inf, json, log, md, " +
+                     "pem, pub, ppk, ssh, txt, xml, yaml\n" +
+                "Books: chm, epub, fb2, mobi\n" +
+                "Packages: deb, ebuild, jar, rpm\n" +
+                "Programs: bat, cmd, com, exe, msi, out, sh, vbs\n" +
         print("CONFIG file created at: "+CONFIG)
 
     def checkconfig(self):
