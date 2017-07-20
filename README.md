@@ -15,11 +15,14 @@ $ pip install classifier
 ## Usage
 ```
 $ python classifier
-usage: classifier [-i Directory]
-        -h, --help        Show help.
+usage: classifier.py [-h] [-v] [-V] [-e] [-c] [-R] [-s]
+                     [-T SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
+                     [-F SPECIFIC_FOLDER] [-o OUTPUT] [-d] [-f FORMAT]
+                     directory
+classifier.py: error: too few arguments
 
-$ python classifier -i .
->> Scanning Files
+$ python classifier .
+>> Scanning Folder: .
 >> Done!
 ```
 
@@ -62,31 +65,32 @@ Downloads
 
 ## Options
 ```
-usage: classifier.py [-h] [-v] [-e] [-t] [-r] [-s]
-                     [-st SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
-                     [-sf SPECIFIC_FOLDER] [-o OUTPUT] [-i INPUT] [-d]
-                     [-f FORMAT]
+usage: classifier.py [-h] [-v] [-V] [-e] [-c] [-R] [-s]
+                     [-T SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
+                     [-F SPECIFIC_FOLDER] [-o OUTPUT] [-d] [-f FORMAT]
+                     directory
 
 Organize files in your directory into different folders
+
+positional arguments:
+  directory             The directory whose files to classify
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         Show version and exit
-  -e, --edit            Edit the list of types and formats
-  -t, --types           Show the current list of types and formats
-  -r, --reset           Reset the default Config file
-  -s, --show-default    Show the default Config file
-  -st, --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
-                        Move all file extensions, given in the args list, in
-                        the current directory into the Specific Folder
-  -sf, --specific-folder SPECIFIC_FOLDER
+  -V, --verbose         List every file moved
+  -e, --edit            Edit the config file
+  -c, --config          Show the current config file
+  -R, --reset           Reset the default config file
+  -s, --show-default    Show the default config file
+  -T, --specific-types SPECIFIC_TYPES [SPECIFIC_TYPES ...]
+                        Move the extensions given into the Specific Folder
+  -F --specific-folder SPECIFIC_FOLDER
                         Folder to move Specific File Type
-  -o, --output OUTPUT
+  -o --output OUTPUT
                         Main directory to put organized folders
-  -i, --input INPUT
-                        The directory whose files to classify
-  -d, --date           Organize files by creation date
-  -f, --format DATEFORMAT
+  -d, --date            Organize files by creation date
+  -f, --format FORMAT
                         set the date format using YYYY, MM or DD
 ```
 
@@ -122,20 +126,16 @@ Workspace
 
 ### Example
 ###### Classify by Date:
-`classifier -d -i .`
+`classifier -i .`
 
 ### Example
 ###### Classify files of directory '/home/source' and put them in location '/home/dest':
-`classifier -i /home/source -o /home/dest`
+`classifier -o /home/dest /home/source`
 
-`Note: ` If -i (source directory) is given without -o (output) directory, this will classify the files of source directory Eg:<br>
-`classifier -i /home/source'`<br>
-This classifies the directory /home/source.
-
-
+`Note: ` If a source directory is given without -o (output) directory, this will classify the files in-place.
 
 ### View the CONFIG, how files will be sorted
-`classifier -t`
+`classifier -c`
 
 ### Edit the CONFIG, to set up manual settings for classification
 `classifier -e`
