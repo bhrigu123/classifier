@@ -14,15 +14,16 @@
 import argparse
 import os
 import subprocess
-from sys import platform
+import sys
 
 
 VERSION = 'Classifier 2.0'
 DIRCONFFILE = '.classifier.conf'
-PLATFORM = platform
+PLATFORM = sys.platform
 OS = os.name
-DEFAULT = """
-Audio: aa, aac, aiff, amr, dvf, flac, gsm, m4a, m4b, m4p, midi, mp3, msv, ogg, ra, wav, wma
+HELP = """usage: classifier DIRECTORY
+    -h, --help"""
+DEFAULT = """Audio: aa, aac, aiff, amr, dvf, flac, gsm, m4a, m4b, m4p, midi, mp3, msv, ogg, ra, wav, wma
 Ringtones: m4r, mmf, srt
 Videos: 3g2, 3gp, amv, avi, flv, f4a, f4p, f4v, gifv, m4p, m4v, mkv, mp2, mp4, mpeg, mpg, ogv, rm, svi, ts, vob, webm, wmv
 Pictures: bmp, bpg, gif, ico, jpeg, jpg, odg, png, psd, rgbe, svg, tiff, webp, vml
@@ -95,7 +96,7 @@ class Classifier:
         self.parser.add_argument("-F", "--specific-folder", type=str,
                                  help="Folder to move Specific File Type")
 
-        self.parser.add_argument("directory", type=str,
+        self.parser.add_argument("directory", type=str, nargs='?',
                                  help="The directory whose files to classify")
         
         self.parser.add_argument("-o", "--output", type=str, # default=self.args.directory  doesn't work yet
@@ -126,8 +127,8 @@ class Classifier:
         if not os.path.isfile(CONFIG):
             self.create_default_config()
         with open(CONFIG, 'r') as file:
-            for items in file:
-                spl = items.replace('\n', '').split(':')
+            for line in file:
+                spl = line.replace('\n', '').split(':')
                 key = spl[0].replace(" ","")
                 val = spl[1].replace(" ","")
                 self.formats[key] = val
@@ -146,7 +147,7 @@ class Classifier:
             print('moved: ' + str(to_file))
 
     def classify(self, formats, output, directory):
-        if not any(os.isfile for file in os.listdir(directory)): # and not self.args.recursive
+        if not any(os.path.isfile for file in os.listdir(directory)): # and not self.args.recursive
             if self.args.verbose:
                 print("No files moved.")
             quit()
@@ -169,18 +170,18 @@ class Classifier:
                     except OSError:
                         raise OSError('Cannot move file {} to {}'.format(file, dest_folder))
 
-    def classify_by_date(self, date_format, output, directory):
-        print("Scanning Files")
-        files = [x for x in os.listdir(directory) if not x.startswith('.')]
-        creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(os.path.join(directory, x)))), files)
-        print(creation_dates)
-
+    def classify_by_date_arrow(self, date_format, output, directory, files):
+        creation_dates = map(lambda x: (x, self.arrow.get(os.path.getctime(os.path.join(directory, x)))), files)
         for file, creation_date in creation_dates:
-            folder = creation_date.format(date_format)
-            folder = os.path.join(output, folder)
+            folder = os.path.join(output, creation_date.format(date_format))
             self.moveto(file, directory, folder)
-        return
 
+    def classify_by_date_no_arrow(self, date_format, output, directory, files):
+        creation_times_since_epoch = (map(lambda x: (x, os.path.getctime(os.path.join(directory, x)))), files)
+        for file, creation_time in creation_times_since_epoch:
+            folder = os.path.join(output, time.strftime(date_format, time.ctime(creation_time)))
+            self.moveto(file, directory, folder)
+            
     def run(self):
 
         if self.args.version:
@@ -189,8 +190,9 @@ class Classifier:
 
         if self.args.config:
             # Show config info then quit
-            for key, value in self.formats.items():
-                print(key + ': '+ value)
+            with open(CONFIG, 'r') as f:
+                for i in f:
+                    sys.stdout.write(i)
             quit()
 
         if self.args.edit:
@@ -207,11 +209,23 @@ class Classifier:
             quit()
             
         if self.args.show_default:
-            print(DEFAULT)
+            sys.stdout.write(DEFAULT)
             quit()
 
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
             print('Specific Folder and Specific Types need to be specified together')
+            quit()
+
+        if not self.args.directory:
+            print(HELP)
+            quit()
+            
+        directory = self.args.directory
+        if self.args.output is None:
+            output = directory
+
+        if not os.path.isdir(directory):
+            print("Folder {} not found.".format(directory))
             quit()
 
         if self.args.specific_folder and self.args.specific_types:
@@ -229,18 +243,8 @@ class Classifier:
         if self.args.format and not self.args.date:
             print('Dateformat -f must be given along with date -d option')
             return False
-
-        if self.args.date:
-            try:
-                import arrow
-            except ImportError:
-                print("You must install arrow using 'pip install arrow' to use date formatting.")
-                return False
-            if self.args.dateformat:
-                self.classify_by_date(self.args.dateformat, output, directory)
-            else:
-                self.classify_by_date(self.dateformat, output, directory)
-        elif self.dirconf and os.path.isfile(self.dirconf):
+                
+        if self.dirconf and os.path.isfile(self.dirconf):   # custom config
             print('Using config in current directory')
             if self.args.output:
                 print('Config in output directory is being ignored')
@@ -257,17 +261,28 @@ class Classifier:
                 except ValueError:
                     print("Your local config file is malformed. Please check and try again.")
                     return False
-        
-        directory = self.args.directory
-        if self.args.output is None:
-            output = directory
             
-        print("\nScanning Folder: " + directory)
-        if self.args.specific_types:
-            print("For: " + str(self.formats.items()))
-        else:
-            print("Using the default CONFIG File\n")
-        self.classify(self.formats, output, directory)
+        elif self.args.date:    # date sort
+            if self.args.format:
+                self.dateformat = self.args.format
+            files = [x for x in os.listdir(directory) if not x.startswith('.') and os.path.isfile(x)]
+            try:
+                import arrow
+                self.arrow = arrow
+                self.classify_by_date_arrow(self.dateformat, output, directory, files)
+            except ImportError:
+                print("You must install arrow using 'pip install arrow'" +
+                      "to use human-readable date formatting.")
+                print("Using the datetime module; formatting help available at " +
+                      "https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior")
+                self.classify_by_date_no_arrow(self.dateformat, output, directory, files)
+
+        else:                   # sort by config     
+            if self.args.specific_types:
+                print("For: " + str(self.formats.items()))
+            else:
+                print("Using the default CONFIG File\n")
+            self.classify(self.formats, output, directory)
         print("Done!")
         return True
 
