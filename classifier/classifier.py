@@ -65,6 +65,9 @@ class Classifier:
         self.description = "Organize files in your directory into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
 
+        self.parser.add_argument("-n", "--no-save", action='store_true',
+                                 help="Run without saving the current directory. Undo will not be available.")
+
         self.parser.add_argument("-v", "--version", action='store_true',
                                  help="Show version and exit")
         
@@ -81,7 +84,7 @@ class Classifier:
                                  help="Reset the default config file")
 
         self.parser.add_argument("-s", "--show-default", action='store_true',
-                                  help="Show the default config file")
+                                 help="Show the default config file")
         
         """
         self.parser.add_argument("-r", "--recursive", action='store_true',
@@ -97,16 +100,19 @@ class Classifier:
                                  help="Folder to move Specific File Type")
 
         self.parser.add_argument("directory", type=str, nargs='?',
-                                 help="The directory whose files to classify")
+                                 help="The directory to classify")
         
         self.parser.add_argument("-o", "--output", type=str, # default=self.args.directory  doesn't work yet
-                                 help="Main directory to put organized folders")
+                                 help="Directory to put organized folders")
         
         self.parser.add_argument("-d", "--date", action='store_true',
                                  help="Organize files by creation date")
 
+        self.parser.add_argument("-u", "--undo", action='store_true',
+                                 help="Revert all file changes since Classifier was last run")
+
         self.parser.add_argument("-f", "--format", type=str,
-                                 help="set the date format using YYYY, MM or DD")
+                                 help="Set a specific date format")
 
         self.args = self.parser.parse_args()
         self.dateformat = 'YYYY-MM-DD'
@@ -123,7 +129,7 @@ class Classifier:
     def checkconfig(self):
         """ create a default config if not available """
         if not os.path.isdir(os.path.dirname(CONFIG)):
-            os.makedirs(os.path.dirname(CONFIG))
+            os.mkdir(os.path.dirname(CONFIG))
         if not os.path.isfile(CONFIG):
             self.create_default_config()
         with open(CONFIG, 'r') as file:
@@ -145,6 +151,30 @@ class Classifier:
         os.rename(from_file, to_file)
         if self.args.verbose:
             print('moved: ' + str(to_file))
+            
+    def save_current(self, directory):
+        self.import_git()
+        repo = self.git.Repo.init(directory)  # works even if repo already exists
+        repo.git.add('--all', '--force')
+        repo.git.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
+                        '--message="Saved by classifier.py to allow an undo function."',
+                        '--quiet')
+        
+    def undo(self, directory, commit=1):
+        # commit is an integer referring to previous revisions
+        self.import_git()
+        repo = self.git.Repo.init(directory)
+        log = repo.git.log('--author="Classifier"', '--pretty="oneline"').split('\n')
+        sha_sums = [i[:i.index(' ')] for i in log]      # remove commit message
+        repo.git.checkout('--force', sha_sums[-commit])
+
+    def import_git(self):
+        try:
+            import git
+            self.git = git
+        except ImportError:
+            raise ImportError("You must install both git and gitpython to use the undo " +
+                  "function, using `apt install git` and `pip install gitpython`.")
 
     def classify(self, formats, output, directory):
         if not any(os.path.isfile for file in os.listdir(directory)): # and not self.args.recursive
@@ -185,14 +215,11 @@ class Classifier:
     def run(self):
 
         if self.args.version:
-            print(VERSION)
-            quit()
+            quit(VERSION)
 
         if self.args.config:
-            # Show config info then quit
             with open(CONFIG, 'r') as f:
-                for i in f:
-                    sys.stdout.write(i)
+                f.readlines()
             quit()
 
         if self.args.edit:
@@ -209,16 +236,13 @@ class Classifier:
             quit()
             
         if self.args.show_default:
-            sys.stdout.write(DEFAULT)
-            quit()
+            quit(DEFAULT)
 
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
-            print('Specific Folder and Specific Types need to be specified together')
-            quit()
+            quit('Specific Folder and Specific Types need to be specified together')
 
         if not self.args.directory:
-            print(HELP)
-            quit()
+            quit(HELP)
             
         directory = self.args.directory
         if self.args.output is None:
@@ -227,6 +251,22 @@ class Classifier:
         if not os.path.isdir(directory):
             print("Folder {} not found.".format(directory))
             quit()
+
+        if not self.args.no_save:
+            try:
+                self.save_current(directory)
+            except ImportError:
+                quit("Unable to undo any changes! Aborting; use --no-save if you are sure.")
+
+        if self.args.undo:
+            print("Reverting all changes since Classifier was last run. If you have " +
+                  "never run Classifier, this will DELETE ALL FILES in the directory.")
+            confirm = input("Type 'Yes' to continue, '?' for more info, or anything else to abort.")
+            if confirm == '?':
+                print("This program uses the Git program and Gitpython library to backup your files.")
+                print("Each time Classifier runs, it saves the current directory in the `.git/` subfolder. ")
+            elif confirm == 'Yes':
+                self.undo(directory)
 
         if self.args.specific_folder and self.args.specific_types:
             self.formats = {self.args.specific_folder: self.args.specific_types}
@@ -241,8 +281,7 @@ class Classifier:
             self.dirconf = os.path.join(self.args.directory, DIRCONFFILE)
 
         if self.args.format and not self.args.date:
-            print('Dateformat -f must be given along with date -d option')
-            return False
+            quit('Dateformat -f must be given along with date -d option')
                 
         if self.dirconf and os.path.isfile(self.dirconf):   # custom config
             print('Using config in current directory')
@@ -259,8 +298,7 @@ class Classifier:
                           '\nFormats:   ' + val)
                     self.classify(self.formats, dst, directory)
                 except ValueError:
-                    print("Your local config file is malformed. Please check and try again.")
-                    return False
+                    quit("Your local config file is malformed. Please check and try again.")
             
         elif self.args.date:    # date sort
             if self.args.format:
@@ -279,12 +317,11 @@ class Classifier:
 
         else:                   # sort by config     
             if self.args.specific_types:
-                print("For: " + str(self.formats.items()))
+                print("Using specified config: " + str(self.formats.items()))
             else:
                 print("Using the default CONFIG File\n")
             self.classify(self.formats, output, directory)
-        print("Done!")
-        return True
+        quit("Done!")
 
 if __name__ == "__main__":
     Classifier()
