@@ -17,7 +17,7 @@ $ pip install classifier
 $ python classifier
 usage: classifier.py [-h] [-v] [-V] [-e] [-c] [-R] [-s]
                      [-T SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
-                     [-F SPECIFIC_FOLDER] [-o OUTPUT] [-d] [-f FORMAT]
+                     [-F SPECIFIC_FOLDER] [-o OUTPUT] [-d] [-u] [-f FORMAT]
                      directory
 classifier.py: error: too few arguments
 
@@ -67,7 +67,7 @@ Downloads
 ```
 usage: classifier.py [-h] [-v] [-V] [-e] [-c] [-R] [-s]
                      [-T SPECIFIC_TYPES [SPECIFIC_TYPES ...]]
-                     [-F SPECIFIC_FOLDER] [-o OUTPUT] [-d] [-f FORMAT]
+                     [-F SPECIFIC_FOLDER] [-o OUTPUT] [-d] [-u] [-f FORMAT]
                      directory
 
 Organize files in your directory into different folders
@@ -89,6 +89,7 @@ optional arguments:
                         Folder to move Specific File Type
   -o --output OUTPUT
                         Main directory to put organized folders
+  -u, --undo            Revert all file changes since Classifier was last run
   -d, --date            Organize files by creation date
   -f, --format FORMAT
                         set the date format using YYYY, MM or DD

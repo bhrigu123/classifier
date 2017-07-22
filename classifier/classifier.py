@@ -16,7 +16,6 @@ import os
 import subprocess
 import sys
 
-
 VERSION = 'Classifier 2.0'
 DIRCONFFILE = '.classifier.conf'
 PLATFORM = sys.platform
@@ -39,14 +38,21 @@ Programs: bat, cmd, com, exe, msi, out, sh, vbs
 
 
 if PLATFORM == 'darwin':
-    CONFIG = os.path.join(os.path.expanduser('~'), '.classifier-master.conf')
+    folder, conf = os.path.expanduser('~'), '.classifier-master.conf'
 elif PLATFORM == 'win32' or OS == 'nt':
-    CONFIG = os.path.join(os.getenv('userprofile'), 'classifier-master.conf')
+    folder, conf = os.getenv('userprofile'), 'classifier-master.conf'
 elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
-    CONFIG = os.path.join(os.getenv('HOME'), '.classifier-master.conf')
+    folder, conf = os.getenv('HOME'), '.classifier-master.conf'
 else:
-    CONFIG = os.path.join(os.getcwd(), '.classifier-master.conf')
+    folder, conf = os.getcwd(), '.classifier-master.conf'
 
+CONFIG = os.path.join(folder, conf)
+
+if sys.version[0] == '2':
+    input = raw_input
+
+
+    
 class Classifier:
     """
     All format lists were taken from wikipedia, not all were added due to extensions
@@ -124,7 +130,7 @@ class Classifier:
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
             conffile.write(DEFAULT)
-        print("CONFIG file created at: "+CONFIG)
+        print("CONFIG file created at {}".format(CONFIG))
 
     def checkconfig(self):
         """ create a default config if not available """
@@ -155,18 +161,20 @@ class Classifier:
     def save_current(self, directory):
         self.import_git()
         repo = self.git.Repo.init(directory)  # works even if repo already exists
-        repo.git.add('--all', '--force')
-        repo.git.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
+        if repo.untracked_files:
+            repo.git.add('--force', '.')
+            repo.git.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
                         '--message="Saved by classifier.py to allow an undo function."',
                         '--quiet')
         
     def undo(self, directory, commit=1):
         # commit is an integer referring to previous revisions
         self.import_git()
-        repo = self.git.Repo.init(directory)
-        log = repo.git.log('--author="Classifier"', '--pretty="oneline"').split('\n')
-        sha_sums = [i[:i.index(' ')] for i in log]      # remove commit message
-        repo.git.checkout('--force', sha_sums[-commit])
+        repo = self.git.Repo.init(directory) 
+        log = repo.git.log('--author=Classifier', '--pretty=oneline').split("\n")
+        sha_sums = [i[:i.find(' ')] for i in log]      # remove commit message
+        repo.git.checkout(sha_sums[-commit])
+        quit("Reverted to state at {}".format(repo.git.show('-s', u'--pretty=format:%ar', sha_sums[-commit])))
 
     def import_git(self):
         try:
@@ -218,8 +226,9 @@ class Classifier:
             quit(VERSION)
 
         if self.args.config:
+            print("Contents of file {}:".format(CONFIG))
             with open(CONFIG, 'r') as f:
-                f.readlines()
+                print(f.read())
             quit()
 
         if self.args.edit:
@@ -252,22 +261,25 @@ class Classifier:
             print("Folder {} not found.".format(directory))
             quit()
 
+        if self.args.undo:
+            print("Reverting all changes since Classifier was last run. If you have " +
+                  "never run Classifier, this will DELETE ALL FILES in the directory.")
+            confirm = input("Type 'Yes' to continue, '?' for more info, or anything else to abort.\n")
+            if confirm == '?':
+                print("This program uses the Git program and Gitpython library to backup your files.")
+                print("Each time Classifier runs, it saves the current directory in the `.git/` subfolder. ")
+                confirm = input("Continue?")
+            if confirm == 'Yes':
+                self.undo(directory)
+            else:
+                quit('Aborting.')
+
         if not self.args.no_save:
             try:
                 self.save_current(directory)
             except ImportError:
                 quit("Unable to undo any changes! Aborting; use --no-save if you are sure.")
-
-        if self.args.undo:
-            print("Reverting all changes since Classifier was last run. If you have " +
-                  "never run Classifier, this will DELETE ALL FILES in the directory.")
-            confirm = input("Type 'Yes' to continue, '?' for more info, or anything else to abort.")
-            if confirm == '?':
-                print("This program uses the Git program and Gitpython library to backup your files.")
-                print("Each time Classifier runs, it saves the current directory in the `.git/` subfolder. ")
-            elif confirm == 'Yes':
-                self.undo(directory)
-
+                
         if self.args.specific_folder and self.args.specific_types:
             self.formats = {self.args.specific_folder: self.args.specific_types}
 
@@ -301,9 +313,12 @@ class Classifier:
                     quit("Your local config file is malformed. Please check and try again.")
             
         elif self.args.date:    # date sort
+            self.save_current()
             if self.args.format:
                 self.dateformat = self.args.format
             files = [x for x in os.listdir(directory) if not x.startswith('.') and os.path.isfile(x)]
+            if not files:
+                quit("Nothing to organize!")
             try:
                 import arrow
                 self.arrow = arrow
