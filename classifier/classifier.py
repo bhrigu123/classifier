@@ -133,7 +133,7 @@ class Classifier:
         print("CONFIG file created at {}".format(CONFIG))
 
     def checkconfig(self):
-        """ create a default config if not available """
+        # parse config file
         if not os.path.isdir(os.path.dirname(CONFIG)):
             os.mkdir(os.path.dirname(CONFIG))
         if not os.path.isfile(CONFIG):
@@ -156,7 +156,7 @@ class Classifier:
             os.makedirs(to_folder)
         os.rename(from_file, to_file)
         if self.args.verbose:
-            print('moved: ' + str(to_file))
+            print('moved {} to {}'.format(from_file, to_file))
             
     def save_current(self, directory):
         self.import_git()
@@ -313,7 +313,6 @@ class Classifier:
                     quit("Your local config file is malformed. Please check and try again.")
             
         elif self.args.date:    # date sort
-            self.save_current()
             if self.args.format:
                 self.dateformat = self.args.format
             files = [x for x in os.listdir(directory) if not x.startswith('.') and os.path.isfile(x)]
@@ -330,7 +329,7 @@ class Classifier:
                       "https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior")
                 self.classify_by_date_no_arrow(self.dateformat, output, directory, files)
 
-        else:                   # sort by config     
+        else:                   # sort by config
             if self.args.specific_types:
                 print("Using specified config: " + str(self.formats.items()))
             else:
