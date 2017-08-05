@@ -43,7 +43,7 @@ if PLATFORM == 'darwin':
 elif PLATFORM == 'win32' or OS == 'nt':
     folder, conf = os.getenv('userprofile'), 'classifier-master.conf'
 elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
-    folder, conf = os.getenv('HOME'), '.classifier-master.conf'
+    folder, conf = os.getenv('HOME') + '/.local/share/classifier', '.classifier-master.conf'
 else:
     folder, conf = os.getcwd(), '.classifier-master.conf'
 
@@ -75,7 +75,7 @@ class Classifier:
         self.parser.add_argument("-n", "--no-save", action='store_true',
                                  help="Run without saving the current directory. Undo will not be available.")
 
-        self.parser.add_argument("-v", "--version", action='store_true',
+        self.parser.add_argument("-v", "--version", action='version', version=VERSION,
                                  help="Show version and exit")
         
         self.parser.add_argument("-V", "--verbose", action='store_true',
@@ -109,7 +109,8 @@ class Classifier:
         self.parser.add_argument("directory", type=str, nargs='?',
                                  help="The directory to classify")
         
-        self.parser.add_argument("-o", "--output", type=str, # default=self.args.self.directory  doesn't work yet
+        self.parser.add_argument("-o", "--output", type=str, # default=self.args.directory
+                                                             # doesn't work if default is an arg :(
                                  help="Directory to put organized folders")
         
         self.parser.add_argument("-d", "--date", action='store_true',
@@ -125,15 +126,15 @@ class Classifier:
         self.dateformat = 'YYYY-MM-DD'
         self.formats = {}
         self.dirconf = None
+        self.git_imported = False
+        self.has_commits = None
+        
         self.checkconfig()
         self.options()
         self.run()
 
-    def options():
+    def options(self):
     # options that don't involve classifying files
-        
-        if self.args.version:
-            quit(VERSION)
 
         if self.args.config:
             print("Contents of file {}:".format(CONFIG))
@@ -157,21 +158,23 @@ class Classifier:
         if self.args.show_default:
             quit(DEFAULT)
 
-        if self.args.specific_folder != self.args.specific_types:
-            quit('Specific Folder and Specific Types need to be specified together')
+        if bool(self.args.specific_folder) != bool(self.args.specific_types):
+            quit('Specific Types and Specific Folder need to be specified together')
+        if self.args.specific_folder and self.args.specific_types and not self.args.directory:
+            quit("-T types MUST be specified before -F folder. Work on this is in progress.")
 
         if not self.args.directory:
             quit(HELP)
 
     def create_default_config(self):
-        with open(CONFIG, "w") as conffile:
-            conffile.write(DEFAULT)
+        with open(CONFIG, "w") as f:
+            f.write(DEFAULT)
         print("CONFIG file created at {}".format(CONFIG))
 
     def checkconfig(self):
         # parse config file
         if not os.path.isdir(os.path.dirname(CONFIG)):
-            os.mkdir(os.path.dirname(CONFIG))
+            os.makedirs(os.path.dirname(CONFIG))
         if not os.path.isfile(CONFIG):
             self.create_default_config()
         with open(CONFIG, 'r') as file:
@@ -195,28 +198,41 @@ class Classifier:
             print('moved {} to {}'.format(from_file, to_file))
             
     def save_current(self):
-        self.import_git()
         git_cmd = self.repo.git
         index = self.repo.index
-        if self.repo.untracked_files or index.diff() or index.diff(self.repo.head.commit):
+        if not (self.repo.untracked_files or index.diff() or index.diff(self.repo.head.commit)):
+            return
         # untracked files or working dir differs from index or last commit differs from index
+        
+        # something's fishy here, it's not saving when it should
+        if self.has_commits and not self.repo.active_branch == 'classifier':
             current_ref = self.repo.head.ref
-            git_cmd.branch('classifier')
+            if 'classifier' not in self.repo.branches:
+                git_cmd.branch('classifier')
             git_cmd.checkout('classifier')
-            git_cmd.add('--all', '--force')
-            git_cmd.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
-                        '--message="Saved by classifier.py to allow an undo function."',
-                        '--quiet')
+        git_cmd.add('--all', '--force')
+        git_cmd.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
+                    '--message="Saved by classifier.py to allow an undo function."',
+                    '--quiet')
+        if self.has_commits:
             git_cmd.checkout(current_ref)
         
-    def undo(self, ref=1):
-        # ref is an integer referring to previous revisions
-        log = [commit for commit in self.repo.iter_commits() if commit.author.name == 'Classifier']
-        self.repo.git.checkout(log[-ref], '--force')
-        print("Reverted to state at {}".format(self.repo.git.show('-s', u'--pretty=format:%ar', log[-ref])))
+    def undo(self):
+        if self.repo.active_branch != 'classifier':
+            current_branch = self.repo.head.ref
+        self.repo.git.checkout('classifier', '--force')
+        if current_branch:
+            self.repo.git.checkout(current_branch)
+        for files, folder in self.formats.items():
+            try:
+                os.rmdir(folder)
+            except OSError as e:
+                if e.errno == 2 or e.errno == 39:
+                # directory doesn't exist or contains files
+                    pass
+        print("Reverted to state at {}".format(self.repo.git.show('-s', u'--pretty=format:%ar', 'classifier')))
 
-    def git_repo_exists(self):
-        self.import_git()
+    def repo_exists(self):
         try:
             self.repo.git.log()
             return True
@@ -224,11 +240,20 @@ class Classifier:
             return False
 
     def import_git(self):
+        if self.git_imported:
+            return
         try:
             import git
             self.git = git
             self.repo = self.git.Repo.init(self.directory)
             # works even if repo already exists
+            try:
+                self.repo.git.branch('a_test_of_the_classifier_py_program')
+                self.repo.git.branch('-D', 'a_test_of_the_classifier_py_program')
+                self.has_commits = True
+            except self.git.exc.GitCommandError:
+                self.has_commits = False
+            self.git_imported = True
 
         except ImportError as e:
             e.args += ("You must install both git and gitpython to use the undo " +
@@ -246,7 +271,7 @@ class Classifier:
             if os.path.isdir(os.path.join(self.directory, file)) or file == DIRCONFFILE:
                 continue
             file_ext = os.path.splitext(file)[1].lower().replace('.', '')
-            for folder, ext_list in list(formats.items()):
+            for folder, ext_list in list(self.formats.items()):
                 # make sure we are passing a list to the extension checker
                 if type(ext_list) == str:
                     ext_list = ext_list.split(',')
@@ -265,9 +290,9 @@ class Classifier:
             self.moveto(file, directory, folder)
 
     def classify_by_date_no_arrow(self, date_format, output, files):
-        creation_times_since_epoch = (map(lambda x: (x, os.path.getctime(os.path.join(self.directory, x)))), files)
+        creation_times_since_epoch = map(lambda x: (x, time.ctime(os.path.getctime(os.path.join(self.directory, x)))), files)
         for file, creation_time in creation_times_since_epoch:
-            folder = os.path.join(output, time.strftime(date_format, time.ctime(creation_time)))
+            folder = os.path.join(output, time.strftime(date_format, creation_time))
             self.moveto(file, self.directory, folder)
             
     def run(self):
@@ -279,15 +304,18 @@ class Classifier:
         self.directory = self.args.directory
         if self.args.output is None:
             output = self.directory
-        elif not os.path.isdir(self.args.output)):
+        elif not os.path.isdir(self.args.output):
             quit("Folder {} not found.".format(self.args.output))
         else:
             output = self.args.output
         # end checks
+
+        if self.args.undo or not self.args.no_save:
+            self.import_git()
         
         if self.args.undo:
             # always quits
-            if not self.git_repo_exists():
+            if not (self.repo_exists() or self.has_commits):
                 quit("You must run Classifier at least once to use the undo function.")
             print("Reverting all changes since Classifier was last run.")
             confirm = input("Continue (y/n)? ")
@@ -326,7 +354,7 @@ class Classifier:
                     print("\nScanning:  " + self.directory +
                           "\nFor:       " + key +
                           '\nFormats:   ' + val)
-                    self.classify(self.formats, dst)
+                    self.classify(dst)
                 except ValueError:
                     quit("Your local config file is malformed. Please check and try again.")
 
@@ -353,7 +381,7 @@ class Classifier:
                 print("Using specified config: " + str(self.formats.items()))
             else:
                 print("Using the default CONFIG File\n")
-            self.classify(self.formats, output)
+            self.classify(output)
         quit("Done!")
 
 if __name__ == "__main__":
