@@ -3,8 +3,9 @@
 """ Classifier
     ----------------Contributors----------------
     https://github.com/bhrigu123/classifier/graphs/contributors
+    https://github.com/jyn514/classifier/graphs/contributors
     ----------------Maintainer----------------
-    Bhrigu Srivastava <captain.bhrigu@gmail.com>
+    Joshua Nelson <jyn514@gmail.com>
     ----------------License----------------
     The MIT License [https://opensource.org/licenses/MIT]
     Copyright (c) 2015 Bhrigu Srivastava http://bhrigu.me
@@ -108,7 +109,7 @@ class Classifier:
         self.parser.add_argument("directory", type=str, nargs='?',
                                  help="The directory to classify")
         
-        self.parser.add_argument("-o", "--output", type=str, # default=self.args.directory  doesn't work yet
+        self.parser.add_argument("-o", "--output", type=str, # default=self.args.self.directory  doesn't work yet
                                  help="Directory to put organized folders")
         
         self.parser.add_argument("-d", "--date", action='store_true',
@@ -125,7 +126,42 @@ class Classifier:
         self.formats = {}
         self.dirconf = None
         self.checkconfig()
+        self.options()
         self.run()
+
+    def options():
+    # options that don't involve classifying files
+        
+        if self.args.version:
+            quit(VERSION)
+
+        if self.args.config:
+            print("Contents of file {}:".format(CONFIG))
+            with open(CONFIG, 'r') as f:
+                print(f.read())
+            quit()
+
+        if self.args.edit:
+            if PLATFORM == 'darwin':
+                subprocess.call(('open', '-t', CONFIG))
+            elif PLATFORM == 'win32' or OS == 'nt':
+                os.startfile(CONFIG)
+            elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
+                subprocess.Popen(['xdg-open', CONFIG])
+            quit()
+
+        if self.args.reset:
+            self.create_default_config()
+            quit()
+            
+        if self.args.show_default:
+            quit(DEFAULT)
+
+        if self.args.specific_folder != self.args.specific_types:
+            quit('Specific Folder and Specific Types need to be specified together')
+
+        if not self.args.directory:
+            quit(HELP)
 
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
@@ -158,43 +194,56 @@ class Classifier:
         if self.args.verbose:
             print('moved {} to {}'.format(from_file, to_file))
             
-    def save_current(self, directory):
+    def save_current(self):
         self.import_git()
-        repo = self.git.Repo.init(directory)  # works even if repo already exists
-        if repo.untracked_files:
-            repo.git.add('--force', '.')
-            repo.git.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
+        git_cmd = self.repo.git
+        index = self.repo.index
+        if self.repo.untracked_files or index.diff() or index.diff(self.repo.head.commit):
+        # untracked files or working dir differs from index or last commit differs from index
+            current_ref = self.repo.head.ref
+            git_cmd.branch('classifier')
+            git_cmd.checkout('classifier')
+            git_cmd.add('--all', '--force')
+            git_cmd.commit('--author="Classifier <https://github.com/jyn514/classifier>"',
                         '--message="Saved by classifier.py to allow an undo function."',
                         '--quiet')
+            git_cmd.checkout(current_ref)
         
-    def undo(self, directory, commit=1):
-        # commit is an integer referring to previous revisions
+    def undo(self, ref=1):
+        # ref is an integer referring to previous revisions
+        log = [commit for commit in self.repo.iter_commits() if commit.author.name == 'Classifier']
+        self.repo.git.checkout(log[-ref], '--force')
+        print("Reverted to state at {}".format(self.repo.git.show('-s', u'--pretty=format:%ar', log[-ref])))
+
+    def git_repo_exists(self):
         self.import_git()
-        repo = self.git.Repo.init(directory) 
-        log = repo.git.log('--author=Classifier', '--pretty=oneline').split("\n")
-        sha_sums = [i[:i.find(' ')] for i in log]      # remove commit message
-        repo.git.checkout(sha_sums[-commit])
-        quit("Reverted to state at {}".format(repo.git.show('-s', u'--pretty=format:%ar', sha_sums[-commit])))
+        try:
+            self.repo.git.log()
+            return True
+        except self.git.exc.GitCommandError as e:
+            return False
 
     def import_git(self):
         try:
             import git
             self.git = git
-        except ImportError:
-            raise ImportError("You must install both git and gitpython to use the undo " +
-                  "function, using `apt install git` and `pip install gitpython`.")
+            self.repo = self.git.Repo.init(self.directory)
+            # works even if repo already exists
 
-    def classify(self, formats, output, directory):
-        if not any(os.path.isfile for file in os.listdir(directory)): # and not self.args.recursive
-            if self.args.verbose:
-                print("No files moved.")
-            quit()
-        for file in os.listdir(directory):
+        except ImportError as e:
+            e.args += ("You must install both git and gitpython to use the undo " +
+                  "function, using `apt install git` and `pip install gitpython`.",)
+            raise
+
+    def classify(self, formats, output):
+        if not any(os.path.isfile for file in os.listdir(self.directory)): # and not self.args.recursive
+            quit("No files moved.")
+        for file in os.listdir(self.directory):
             """
-            if os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
-                self.classify(self.formats, output, os.path.join(directory, file))
+            if os.path.isdir(os.path.join(self.directory, file)) and self.args.recursive:
+                self.classify(self.formats, output, os.path.join(self.directory, file))
             """
-            if os.path.isdir(os.path.join(directory, file)) or file == DIRCONFFILE:
+            if os.path.isdir(os.path.join(self.directory, file)) or file == DIRCONFFILE:
                 continue
             file_ext = os.path.splitext(file)[1].lower().replace('.', '')
             for folder, ext_list in list(formats.items()):
@@ -204,98 +253,67 @@ class Classifier:
                 if file_ext in ext_list:
                     try:
                         dest_folder = os.path.join(output, folder)
-                        self.moveto(file, directory, dest_folder)
-                    except OSError:
-                        raise OSError('Cannot move file {} to {}'.format(file, dest_folder))
+                        self.moveto(file, self.directory, dest_folder)
+                    except OSError as e:
+                        e.args += ('Cannot move file {} to {}'.format(file, dest_folder),)
+                        raise
 
-    def classify_by_date_arrow(self, date_format, output, directory, files):
+    def classify_by_date_arrow(self, date_format, output, files):
         creation_dates = map(lambda x: (x, self.arrow.get(os.path.getctime(os.path.join(directory, x)))), files)
         for file, creation_date in creation_dates:
             folder = os.path.join(output, creation_date.format(date_format))
             self.moveto(file, directory, folder)
 
-    def classify_by_date_no_arrow(self, date_format, output, directory, files):
-        creation_times_since_epoch = (map(lambda x: (x, os.path.getctime(os.path.join(directory, x)))), files)
+    def classify_by_date_no_arrow(self, date_format, output, files):
+        creation_times_since_epoch = (map(lambda x: (x, os.path.getctime(os.path.join(self.directory, x)))), files)
         for file, creation_time in creation_times_since_epoch:
             folder = os.path.join(output, time.strftime(date_format, time.ctime(creation_time)))
-            self.moveto(file, directory, folder)
+            self.moveto(file, self.directory, folder)
             
     def run(self):
-
-        if self.args.version:
-            quit(VERSION)
-
-        if self.args.config:
-            print("Contents of file {}:".format(CONFIG))
-            with open(CONFIG, 'r') as f:
-                print(f.read())
-            quit()
-
-        if self.args.edit:
-            if PLATFORM == 'darwin':
-                subprocess.call(('open', '-t', CONFIG))
-            elif PLATFORM == 'win32' or OS == 'nt':
-                os.startfile(CONFIG)
-            elif PLATFORM == 'linux' or PLATFORM == 'linux2' or OS == 'posix':
-                subprocess.Popen(['xdg-open', CONFIG])
-            quit()
-
-        if self.args.reset:
-            self.create_default_config()
-            quit()
-            
-        if self.args.show_default:
-            quit(DEFAULT)
-
-        if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
-            quit('Specific Folder and Specific Types need to be specified together')
-
-        if not self.args.directory:
-            quit(HELP)
-            
-        directory = self.args.directory
+    # main program
+    
+        # directory checks
+        if not os.path.isdir(self.args.directory):
+            quit("Folder {} not found.".format(self.directory))            
+        self.directory = self.args.directory
         if self.args.output is None:
-            output = directory
-
-        if not os.path.isdir(directory):
-            print("Folder {} not found.".format(directory))
-            quit()
-
+            output = self.directory
+        elif not os.path.isdir(self.args.output)):
+            quit("Folder {} not found.".format(self.args.output))
+        else:
+            output = self.args.output
+        # end checks
+        
         if self.args.undo:
-            print("Reverting all changes since Classifier was last run. If you have " +
-                  "never run Classifier, this will DELETE ALL FILES in the directory.")
-            confirm = input("Type 'Yes' to continue, '?' for more info, or anything else to abort.\n")
-            if confirm == '?':
-                print("This program uses the Git program and Gitpython library to backup your files.")
-                print("Each time Classifier runs, it saves the current directory in the `.git/` subfolder. ")
-                confirm = input("Continue?")
-            if confirm == 'Yes':
-                self.undo(directory)
+            # always quits
+            if not self.git_repo_exists():
+                quit("You must run Classifier at least once to use the undo function.")
+            print("Reverting all changes since Classifier was last run.")
+            confirm = input("Continue (y/n)? ")
+            if confirm == 'y':
+                quit(self.undo())
             else:
                 quit('Aborting.')
 
         if not self.args.no_save:
             try:
-                self.save_current(directory)
+                self.save_current()
             except ImportError:
-                quit("Unable to undo any changes! Aborting; use --no-save if you are sure.")
+                quit("Unable to undo changes. Aborting; use --no-save to override.")
                 
         if self.args.specific_folder and self.args.specific_types:
             self.formats = {self.args.specific_folder: self.args.specific_types}
 
-        if self.args.output is None:
-            output = self.args.directory
-        else:
-            output = self.args.output
-
         # Check for a config file in the source file directory
-        if self.args.directory and os.path.isfile(os.path.join(self.args.directory, DIRCONFFILE)):
-            self.dirconf = os.path.join(self.args.directory, DIRCONFFILE)
+        if os.path.isfile(os.path.join(self.directory, DIRCONFFILE)):
+            self.dirconf = os.path.join(self.directory, DIRCONFFILE)
 
         if self.args.format and not self.args.date:
-            quit('Dateformat -f must be given along with date -d option')
-                
-        if self.dirconf and os.path.isfile(self.dirconf):   # custom config
+            quit('To specify a dateformat, sort by date with -d')
+
+        # custom config
+        if self.dirconf and os.path.isfile(self.dirconf):
             print('Using config in current directory')
             if self.args.output:
                 print('Config in output directory is being ignored')
@@ -305,36 +323,37 @@ class Classifier:
                 try:
                     (key, dst, val) = items.split(':')
                     self.formats[key] = val.replace('\n', '').split(',')
-                    print("\nScanning:  " + directory +
+                    print("\nScanning:  " + self.directory +
                           "\nFor:       " + key +
                           '\nFormats:   ' + val)
-                    self.classify(self.formats, dst, directory)
+                    self.classify(self.formats, dst)
                 except ValueError:
                     quit("Your local config file is malformed. Please check and try again.")
-            
-        elif self.args.date:    # date sort
+
+        # date sort
+        elif self.args.date:    
             if self.args.format:
                 self.dateformat = self.args.format
-            files = [x for x in os.listdir(directory) if not x.startswith('.') and os.path.isfile(x)]
+            files = [x for x in os.listdir(self.directory) if not x.startswith('.') and os.path.isfile(x)]
             if not files:
                 quit("Nothing to organize!")
             try:
                 import arrow
                 self.arrow = arrow
-                self.classify_by_date_arrow(self.dateformat, output, directory, files)
+                self.classify_by_date_arrow(self.dateformat, output, files)
             except ImportError:
-                print("You must install arrow using 'pip install arrow'" +
-                      "to use human-readable date formatting.")
-                print("Using the datetime module; formatting help available at " +
-                      "https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior")
-                self.classify_by_date_no_arrow(self.dateformat, output, directory, files)
+                print("You must install arrow using 'pip install arrow' to use human-readable date formatting.")
+                print("Using the datetime module; formatting help available here:")
+                print("https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior")
+                self.classify_by_date_no_arrow(self.dateformat, output, files)
 
-        else:                   # sort by config
+        # sort by config
+        else:                   
             if self.args.specific_types:
                 print("Using specified config: " + str(self.formats.items()))
             else:
                 print("Using the default CONFIG File\n")
-            self.classify(self.formats, output, directory)
+            self.classify(self.formats, output)
         quit("Done!")
 
 if __name__ == "__main__":
