@@ -99,7 +99,7 @@ class Classifier:
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
             conffile.write("IGNORE: part, desktop\n" +
-                           "Music: mp3, aac, flac, ogg, wma, m4a, aiff, wav, amr\n" +
+                           "Music: mp3, aac, flac, ogg, wma, m4a, aiff, wav, opus, amr\n" +
                            "Videos: flv, ogv, avi, mp4, mpg, mpeg, 3gp, mkv, ts, webm, vob, wmv\n" +
                            "Pictures: png, jpeg, gif, jpg, bmp, svg, webp, psd, tiff\n" +
                            "Archives: rar, zip, 7z, gz, bz2, tar, dmg, tgz, xz, iso, cpio\n" +
