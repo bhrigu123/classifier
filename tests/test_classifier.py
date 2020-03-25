@@ -4,6 +4,8 @@ import arrow
 import os
 import shutil
 import unittest
+import time
+import datetime
 import classifier.classifier as clf
 
 
@@ -13,7 +15,7 @@ class ClassifierTest(unittest.TestCase):
     __location = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__), '.unittest'))
 
-    __tmp_files = [u'test_file', u'test_file_中文']
+    __tmp_files = [u'test_file.mp3', u'test_file_中文']
     __tmp_dirs = [u'test_dir', u'test_dir_中文']
 
     def setUp(self):
@@ -55,6 +57,31 @@ class ClassifierTest(unittest.TestCase):
             self.assertTrue(os.path.exists(file_))
         for dir_ in self.__tmp_dirs:
             self.assertTrue(os.path.exists(dir_))
+
+    def test_ignore_newer_than_should_ignore_new_files(self):
+        self.classifier = clf.Classifier([
+            '--ignore-newer-than=10'
+        ])
+
+        self.classifier.run()
+
+        for file in self.__tmp_files:
+            self.assertTrue(os.path.exists(self.__location.join(file)))
+
+    def test_ignore_newer_than_should_ignore_new_files(self):
+        self.classifier = clf.Classifier([
+            '--ignore-newer-than=10'
+        ])
+
+        for file_ in self.__tmp_files:
+            date = datetime.datetime.now() - datetime.timedelta(minutes=11)
+            mod_time = time.mktime(date.timetuple())
+            os.utime(file_, (mod_time, mod_time))
+
+        self.classifier.run()
+
+        for file in self.__tmp_files:
+            self.assertFalse(os.path.exists(self.__location.join(file)))
 
 
 if __name__ == '__main__':

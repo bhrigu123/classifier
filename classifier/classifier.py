@@ -12,11 +12,12 @@
 """
 
 import argparse
-import arrow
 import os
 import subprocess
 import sys
+from datetime import timedelta
 
+import arrow
 
 VERSION = 'Classifier 2.0'
 DIRCONFFILE = '.classifier.conf'
@@ -34,7 +35,7 @@ else:
 
 
 def main():
-    Classifier()
+    Classifier(sys.argv[1:]).run()
 
 
 class Classifier:
@@ -47,7 +48,7 @@ class Classifier:
     Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
     """
 
-    def __init__(self):
+    def __init__(self, args=None):
         self.description = "Organize files in your directory instantly,by classifying them into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
 
@@ -62,13 +63,13 @@ class Classifier:
 
         self.parser.add_argument("-rst", "--reset", action='store_true',
                                  help="Reset the default Config file")
-        
+
         """
         self.parser.add_argument("-r", "--recursive", action='store_true',
                                  help="Recursively search your source directory. " +
                                  "WARNING: Ensure you use the correct path as this " +
                                  "WILL move all files from your selected types.")
-        """        
+        """
 
         self.parser.add_argument("-st", "--specific-types", type=str, nargs='+',
                                  help="Move all file extensions, given in the args list, " +
@@ -89,12 +90,14 @@ class Classifier:
         self.parser.add_argument("-df", "--dateformat", type=str,
                                  help="set the date format using YYYY, MM or DD")
 
-        self.args = self.parser.parse_args()
+        self.parser.add_argument("-n", "--ignore-newer-than", type=int,
+                                 help="Ignore files newer than provided duration in minutes (i.e. 1m, 1h, 30s, 1w, 5d)")
+
+        self.args = self.parser.parse_args(args)
         self.dateformat = 'YYYY-MM-DD'
         self.formats = {}
         self.dirconf = None
         self.checkconfig()
-        self.run()
 
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
@@ -109,7 +112,7 @@ class Classifier:
                            "DEBPackages: deb\n" +
                            "Programs: exe, msi\n" +
                            "RPMPackages: rpm")
-        print("CONFIG file created at: "+CONFIG)
+        print("CONFIG file created at: " + CONFIG)
 
     def checkconfig(self):
         """ create a default config if not available """
@@ -121,14 +124,19 @@ class Classifier:
         with open(CONFIG, 'r') as file:
             for items in file:
                 spl = items.replace('\n', '').split(':')
-                key = spl[0].replace(" ","")
-                val = spl[1].replace(" ","")
+                key = spl[0].replace(" ", "")
+                val = spl[1].replace(" ", "")
                 self.formats[key] = val
         return
 
     def moveto(self, filename, from_folder, to_folder):
         from_file = os.path.join(from_folder, filename)
+
+        if self._is_file_too_recent(from_file):
+            return
+
         to_file = os.path.join(to_folder, filename)
+
         # to move only files, not folders
         if not to_file == from_file:
             print('moved: ' + str(to_file))
@@ -194,6 +202,20 @@ class Classifier:
             arg = self._format_text_arg(arg)
         return arg
 
+    def _is_file_too_recent(self, from_file):
+        if self.args.ignore_newer_than is None:
+            return False
+
+        ignore_newer_than = int(self.args.ignore_newer_than)
+
+        file_creation_time = arrow.get(os.path.getctime(from_file))
+
+        diff: timedelta = arrow.utcnow() - file_creation_time
+
+        minutes = diff.total_seconds() / 60
+
+        return ignore_newer_than > minutes
+
     def run(self):
         if self.args.version:
             # Show version information and quit
@@ -203,7 +225,7 @@ class Classifier:
         if self.args.types:
             # Show file format information then quit
             for key, value in self.formats.items():
-                print(key + ': '+ value)
+                print(key + ': ' + value)
             return False
 
         if self.args.edittypes:
@@ -287,4 +309,3 @@ class Classifier:
 
         print("Done!\n")
         return True
-
