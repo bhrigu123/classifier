@@ -25,6 +25,9 @@ class ClassifierTest(unittest.TestCase):
         for dir_ in self.__tmp_dirs:
             if not os.path.exists(dir_):
                 os.mkdir(dir_)
+
+        self.classifier = clf.Classifier()
+
         super(ClassifierTest, self).setUp()
 
     def tearDown(self):
@@ -34,7 +37,7 @@ class ClassifierTest(unittest.TestCase):
     def test_moveto(self):
         target_dir = os.path.abspath(os.path.join(self.__location, 'moveto'))
         for file_ in self.__tmp_files:
-            clf.self.moveto(file_, self.__location, target_dir)
+            self.classifier.moveto(file_, self.__location, target_dir)
 
         for file_ in self.__tmp_files:
             final_file_path = os.path.join(target_dir, file_)
@@ -47,7 +50,7 @@ class ClassifierTest(unittest.TestCase):
             target_dir = arrow.get(os.path.getctime(file_)).format(date_format)
             final_file_path = os.path.join(target_dir, file_)
             target_files.append(final_file_path)
-        clf.self.classify_by_date(date_format, self.__location)
+        self.classifier.classify_by_date(date_format, self.__location, self.__location)
         for file_ in target_files:
             self.assertTrue(os.path.exists(file_))
         for dir_ in self.__tmp_dirs:
