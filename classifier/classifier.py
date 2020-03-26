@@ -12,11 +12,13 @@
 """
 
 import argparse
-import arrow
 import os
 import subprocess
 import sys
+from pytimeparse import parse as timeparse
+from datetime import timedelta
 
+import arrow
 
 VERSION = 'Classifier 2.0'
 DIRCONFFILE = '.classifier.conf'
@@ -34,7 +36,7 @@ else:
 
 
 def main():
-    Classifier()
+    Classifier(sys.argv[1:]).run()
 
 
 class Classifier:
@@ -47,7 +49,7 @@ class Classifier:
     Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
     """
 
-    def __init__(self):
+    def __init__(self, args=None):
         self.description = "Organize files in your directory instantly,by classifying them into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
 
@@ -62,13 +64,13 @@ class Classifier:
 
         self.parser.add_argument("-rst", "--reset", action='store_true',
                                  help="Reset the default Config file")
-        
+
         """
         self.parser.add_argument("-r", "--recursive", action='store_true',
                                  help="Recursively search your source directory. " +
                                  "WARNING: Ensure you use the correct path as this " +
                                  "WILL move all files from your selected types.")
-        """        
+        """
 
         self.parser.add_argument("-st", "--specific-types", type=str, nargs='+',
                                  help="Move all file extensions, given in the args list, " +
@@ -89,12 +91,17 @@ class Classifier:
         self.parser.add_argument("-df", "--dateformat", type=str,
                                  help="set the date format using YYYY, MM or DD")
 
-        self.args = self.parser.parse_args()
+        self.parser.add_argument("-n", "--ignore-newer-than", type=str,
+                                 help="Ignore files created or modified in less than provided time "
+                                      "(i.e. 5m, 32m, 2h32m, 3d2h32m, 1h, 1d, 2w)")
+
+        self._ignore_newer_than = None
+
+        self.args = self.parser.parse_args(args)
         self.dateformat = 'YYYY-MM-DD'
         self.formats = {}
         self.dirconf = None
         self.checkconfig()
-        self.run()
 
     def create_default_config(self):
         with open(CONFIG, "w") as conffile:
@@ -109,7 +116,7 @@ class Classifier:
                            "DEBPackages: deb\n" +
                            "Programs: exe, msi\n" +
                            "RPMPackages: rpm")
-        print("CONFIG file created at: "+CONFIG)
+        print("CONFIG file created at: " + CONFIG)
 
     def checkconfig(self):
         """ create a default config if not available """
@@ -121,14 +128,19 @@ class Classifier:
         with open(CONFIG, 'r') as file:
             for items in file:
                 spl = items.replace('\n', '').split(':')
-                key = spl[0].replace(" ","")
-                val = spl[1].replace(" ","")
+                key = spl[0].replace(" ", "")
+                val = spl[1].replace(" ", "")
                 self.formats[key] = val
         return
 
     def moveto(self, filename, from_folder, to_folder):
         from_file = os.path.join(from_folder, filename)
+
+        if self._is_file_too_recent(from_file):
+            return
+
         to_file = os.path.join(to_folder, filename)
+
         # to move only files, not folders
         if not to_file == from_file:
             print('moved: ' + str(to_file))
@@ -194,6 +206,21 @@ class Classifier:
             arg = self._format_text_arg(arg)
         return arg
 
+    def _is_file_too_recent(self, from_file):
+        if self._ignore_newer_than is None:
+            return False
+
+        file_modification_time = arrow.get(os.path.getmtime(from_file))
+
+        time_since_modification: timedelta = arrow.utcnow() - file_modification_time
+
+        return self._ignore_newer_than > time_since_modification
+
+    def _parse_ignore_newer_than(self):
+        if not self.args.ignore_newer_than:
+            return
+        self._ignore_newer_than = timedelta(seconds=timeparse(self.args.ignore_newer_than))
+
     def run(self):
         if self.args.version:
             # Show version information and quit
@@ -203,7 +230,7 @@ class Classifier:
         if self.args.types:
             # Show file format information then quit
             for key, value in self.formats.items():
-                print(key + ': '+ value)
+                print(key + ': ' + value)
             return False
 
         if self.args.edittypes:
@@ -255,6 +282,14 @@ class Classifier:
                     'Dateformat -df must be given alongwith date -dt option')
                 sys.exit()
 
+        if self.args.ignore_newer_than:
+            try:
+                self._parse_ignore_newer_than()
+            except TypeError:
+                print("Invalid value for ignore-newer-than: " + self.args.ignore_newer_than)
+                print("Example of valid values: 5m, 32m, 2h32m, 3d2h32m, 1h, 1d, 2w")
+                return False
+
         if self.args.date:
             if self.args.dateformat:
                 self.classify_by_date(self.args.dateformat, output, directory)
@@ -287,4 +322,3 @@ class Classifier:
 
         print("Done!\n")
         return True
-
