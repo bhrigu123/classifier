@@ -15,6 +15,7 @@ import argparse
 import os
 import subprocess
 import sys
+from pytimeparse import parse as timeparse
 from datetime import timedelta
 
 import arrow
@@ -90,8 +91,11 @@ class Classifier:
         self.parser.add_argument("-df", "--dateformat", type=str,
                                  help="set the date format using YYYY, MM or DD")
 
-        self.parser.add_argument("-n", "--ignore-newer-than", type=int,
-                                 help="Ignore files newer than provided duration in minutes (i.e. 1m, 1h, 30s, 1w, 5d)")
+        self.parser.add_argument("-n", "--ignore-newer-than", type=str,
+                                 help="Ignore files created or modified in less than provided time "
+                                      "(i.e. 5m, 32m, 2h32m, 3d2h32m, 1h, 1d, 2w)")
+
+        self._ignore_newer_than = None
 
         self.args = self.parser.parse_args(args)
         self.dateformat = 'YYYY-MM-DD'
@@ -203,18 +207,19 @@ class Classifier:
         return arg
 
     def _is_file_too_recent(self, from_file):
-        if self.args.ignore_newer_than is None:
+        if self._ignore_newer_than is None:
             return False
 
-        ignore_newer_than = int(self.args.ignore_newer_than)
+        file_modification_time = arrow.get(os.path.getmtime(from_file))
 
-        file_creation_time = arrow.get(os.path.getctime(from_file))
+        time_since_modification: timedelta = arrow.utcnow() - file_modification_time
 
-        diff: timedelta = arrow.utcnow() - file_creation_time
+        return self._ignore_newer_than > time_since_modification
 
-        minutes = diff.total_seconds() / 60
-
-        return ignore_newer_than > minutes
+    def _parse_ignore_newer_than(self):
+        if not self.args.ignore_newer_than:
+            return
+        self._ignore_newer_than = timedelta(seconds=timeparse(self.args.ignore_newer_than))
 
     def run(self):
         if self.args.version:
@@ -276,6 +281,14 @@ class Classifier:
                 print(
                     'Dateformat -df must be given alongwith date -dt option')
                 sys.exit()
+
+        if self.args.ignore_newer_than:
+            try:
+                self._parse_ignore_newer_than()
+            except TypeError:
+                print("Invalid value for ignore-newer-than: " + self.args.ignore_newer_than)
+                print("Example of valid values: 5m, 32m, 2h32m, 3d2h32m, 1h, 1d, 2w")
+                return False
 
         if self.args.date:
             if self.args.dateformat:

@@ -15,7 +15,7 @@ class ClassifierTest(unittest.TestCase):
     __location = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__), '.unittest'))
 
-    __tmp_files = [u'test_file.mp3', u'test_file_中文']
+    __tmp_files = [u'test_file.mp3', u'test_file_中文.rar']
     __tmp_dirs = [u'test_dir', u'test_dir_中文']
 
     def setUp(self):
@@ -60,28 +60,37 @@ class ClassifierTest(unittest.TestCase):
 
     def test_ignore_newer_than_should_ignore_new_files(self):
         self.classifier = clf.Classifier([
-            '--ignore-newer-than=10'
+            '--ignore-newer-than=10m'
         ])
 
-        self.classifier.run()
+        self.assertTrue(self.classifier.run())
 
         for file in self.__tmp_files:
-            self.assertTrue(os.path.exists(self.__location.join(file)))
+            file_path = os.path.join(self.__location, file)
+            self.assertTrue(os.path.exists(file_path))
 
-    def test_ignore_newer_than_should_ignore_new_files(self):
+    def test_ignore_newer_than_should_not_ignore_old_files(self):
         self.classifier = clf.Classifier([
-            '--ignore-newer-than=10'
+            '--ignore-newer-than=10m'
         ])
 
         for file_ in self.__tmp_files:
             date = datetime.datetime.now() - datetime.timedelta(minutes=11)
             mod_time = time.mktime(date.timetuple())
-            os.utime(file_, (mod_time, mod_time))
+            os.utime(os.path.join(self.__location, file_), (mod_time, mod_time))
 
-        self.classifier.run()
+        self.assertTrue(self.classifier.run())
 
         for file in self.__tmp_files:
-            self.assertFalse(os.path.exists(self.__location.join(file)))
+            fp = os.path.join(self.__location, file)
+            self.assertFalse(os.path.exists(fp))
+
+    def test_ignore_newer_than_with_wrong_input(self):
+        self.classifier = clf.Classifier([
+            '--ignore-newer-than=wrong_input'
+        ])
+
+        self.assertFalse(self.classifier.run())
 
 
 if __name__ == '__main__':
