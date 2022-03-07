@@ -9,7 +9,7 @@ Organize files in your current directory, by classifying them into folders of mu
 ## Installation
 
 ```sh
-$ pip install classifier
+$ pip install classifier-reborn
 ```
 
 #### Compatibility
