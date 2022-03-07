@@ -35,7 +35,7 @@ jobs:
       run: tox
 
     - uses: codecov/codecov-action@v2.1.0
-      if: "${{matrix.platform}}-${{matrix.python-version}}" == "ubuntu-latest-3.9"
+      if: ${{matrix.platform =="ubuntu-latest" $$ matrix.python-version == "3.9"}}
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: coverage.xml
