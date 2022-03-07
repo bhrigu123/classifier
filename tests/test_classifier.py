@@ -8,8 +8,10 @@ import shutil
 import pytest
 import classifier.classifier as clf
 import tempfile
+from loguru import loggers
 
 FILES = [".test", "中文.test"]
+
 
 def get_temp_dir():
     return tempfile.mkdtemp()
@@ -33,7 +35,10 @@ def classifier():
 
     yield classifier
 
-    shutil.rmtree(tmpdir)
+    try:
+        shutil.rmtree(tmpdir)
+    except PermissionError:
+        logger.error(f"Permission error when removing {tmpdir}")
 
 
 @pytest.mark.parametrize("target", ("moveto",))
@@ -53,7 +58,8 @@ def test_moveto(classifier, target):
     for file in classifier.__files:
         final_path.append(
             target_path.joinpath(
-                arrow.get(os.path.getctime(file)).format(date_fmt), pathlib.Path(file).name
+                arrow.get(os.path.getctime(file)).format(date_fmt),
+                pathlib.Path(file).name,
             )
         )
 
