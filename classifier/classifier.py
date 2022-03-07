@@ -13,7 +13,6 @@
 """
 
 import argparse
-from this import d
 import arrow
 import os
 import subprocess
