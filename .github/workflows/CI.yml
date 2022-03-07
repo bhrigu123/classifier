@@ -25,7 +25,7 @@ jobs:
       id: cache-tox-tests
       with:
         path: .tox
-        key: ${{ runner-os }}-${{ matrix.python-version }}-venv-${{ hashFiles('requirements.txt') }}-${{ hashFiles('tests/requirements.txt') }}-${{ hashFiles('setup.cfg') }}
+        key: ${{ runner.os }}-${{ matrix.python-version }}-venv-${{ hashFiles('requirements.txt') }}-${{ hashFiles('tests/requirements.txt') }}-${{ hashFiles('setup.cfg') }}
         restore-keys: |
           ${{ runner.os }}-tox-tests
 
@@ -35,7 +35,7 @@ jobs:
       run: tox
 
     - uses: codecov/codecov-action@v2.1.0
-      if: ${{matrix.platform}} == 'ubunut-${{matrix.python-version}} == "ubuntu-latest-3.9"
+      if: ${{runner.os == 'Linux' && matrix.python-version == '3.9'}}
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: coverage.xml
