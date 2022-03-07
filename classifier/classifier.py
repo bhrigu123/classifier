@@ -2,12 +2,13 @@
 
 """ Classifier
     ----------------Contributors----------------
-    https://github.com/bhrigu123/classifier/graphs/contributors
+    https://github.com/iwishiwasaneagle/classifier/graphs/contributors
     ----------------Maintainer----------------
-    Bhrigu Srivastava <captain.bhrigu@gmail.com>
+    Jan-Hendrik Ewers <jh.ewers@gmail.com>
     ----------------License----------------
     The MIT License [https://opensource.org/licenses/MIT]
     Copyright (c) 2015 Bhrigu Srivastava http://bhrigu.me
+    Copyright (c) 2022 Jan-Hendrik Ewers https://janhendrikewers.uk
 
 """
 
@@ -18,7 +19,7 @@ import subprocess
 import sys
 
 
-VERSION = 'Classifier 2.0'
+VERSION = 'Classifier 3.0'
 DIRCONFFILE = '.classifier.conf'
 PLATFORM = sys.platform
 OS = os.name
@@ -288,3 +289,5 @@ class Classifier:
         print("Done!\n")
         return True
 
+if __name__ == "__main__":
+    main()
