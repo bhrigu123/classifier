@@ -4,7 +4,7 @@
 [![CI](https://github.com/iwishiwasaneagle/classifier/actions/workflows/CI.yml/badge.svg)](https://github.com/iwishiwasaneagle/classifier/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/iwishiwasaneagle/classifier/branch/master/graph/badge.svg?token=ZW51EYKLL0)](https://codecov.io/gh/iwishiwasaneagle/classifier)
 [![PyPI version](https://badge.fury.io/py/classifier-reborn.svg)](https://badge.fury.io/py/classifier-reborn)
-![GitHub](https://img.shields.io/github/license/iwishiwasaneagle/classifier)
+[![GitHub](https://img.shields.io/github/license/iwishiwasaneagle/classifier)](https://github.com/iwishiwasaneagle/classifier/blob/master/LICENSE)
 
 
 Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
