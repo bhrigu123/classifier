@@ -1,13 +1,19 @@
 
 # Classifier
+
+[![CI](https://github.com/iwishiwasaneagle/classifier/actions/workflows/CI.yml/badge.svg)](https://github.com/iwishiwasaneagle/classifier/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/iwishiwasaneagle/classifier/branch/master/graph/badge.svg?token=ZW51EYKLL0)](https://codecov.io/gh/iwishiwasaneagle/classifier)
+
 Organize files in your current directory, by classifying them into folders of music, pdfs, images, etc.
 
 ## Installation
+
 ```sh
 $ pip install classifier
 ```
+
 #### Compatibility
-* Python 2.7 / Python 3.4
+* Python 3.7 - Python 3.9
 * Linux / OSX / Windows
 
 
