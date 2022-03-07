@@ -8,7 +8,7 @@ import shutil
 import pytest
 import classifier.classifier as clf
 import tempfile
-from loguru import loggers
+from loguru import logger
 
 FILES = [".test", "中文.test"]
 
