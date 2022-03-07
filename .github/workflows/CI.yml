@@ -15,7 +15,7 @@ jobs:
         python-version: ["3.7", "3.8", "3.9"]
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -35,7 +35,7 @@ jobs:
       run: tox
 
     - uses: codecov/codecov-action@v2.1.0
-      if: "${{matrix.platform}}-${{matrix.python-version}}" == "ubuntu-latest-3.9"
+      if: ${{matrix.platform}} == 'ubunut-${{matrix.python-version}} == "ubuntu-latest-3.9"
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: coverage.xml

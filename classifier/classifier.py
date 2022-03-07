@@ -13,10 +13,12 @@
 """
 
 import argparse
+from this import d
 import arrow
 import os
 import subprocess
 import sys
+from loguru import logger
 
 
 VERSION = 'Classifier 3.0'
@@ -48,7 +50,11 @@ class Classifier:
     Documents 	-	https://en.wikipedia.org/wiki/List_of_Microsoft_Office_filename_extensions
     """
 
-    def __init__(self):
+    def __init__(self, test=False):
+        if not test:
+            self.setup_parser()
+
+    def setup_parser(self):
         self.description = "Organize files in your directory instantly,by classifying them into different folders"
         self.parser = argparse.ArgumentParser(description=self.description)
 
@@ -110,7 +116,7 @@ class Classifier:
                            "DEBPackages: deb\n" +
                            "Programs: exe, msi\n" +
                            "RPMPackages: rpm")
-        print("CONFIG file created at: "+CONFIG)
+        logger.info("CONFIG file created at: "+CONFIG)
 
     def checkconfig(self):
         """ create a default config if not available """
@@ -132,7 +138,7 @@ class Classifier:
         to_file = os.path.join(to_folder, filename)
         # to move only files, not folders
         if not to_file == from_file:
-            print('moved: ' + str(to_file))
+            logger.info('moved: ' + str(to_file))
             if os.path.isfile(from_file):
                 if not os.path.exists(to_folder):
                     os.makedirs(to_folder)
@@ -163,7 +169,7 @@ class Classifier:
                                     try:
                                         self.moveto(file, directory, folder)
                                     except Exception as e:
-                                        print('Cannot move file - {} - {}'.format(file, str(e)))
+                                        logger.info('Cannot move file - {} - {}'.format(file, str(e)))
             """
             elif os.path.isdir(os.path.join(directory, file)) and self.args.recursive:
                 self.classify(self.formats, output, os.path.join(directory, file))
@@ -171,11 +177,11 @@ class Classifier:
         return
 
     def classify_by_date(self, date_format, output, directory):
-        print("Scanning Files")
+        logger.info("Scanning Files")
 
         files = [x for x in os.listdir(directory) if not x.startswith('.')]
         creation_dates = map(lambda x: (x, arrow.get(os.path.getctime(os.path.join(directory, x)))), files)
-        print(creation_dates)
+        logger.info(creation_dates)
 
         for file, creation_date in creation_dates:
             folder = creation_date.format(date_format)
@@ -198,13 +204,13 @@ class Classifier:
     def run(self):
         if self.args.version:
             # Show version information and quit
-            print(VERSION)
+            logger.info(VERSION)
             return False
 
         if self.args.types:
             # Show file format information then quit
             for key, value in self.formats.items():
-                print(key + ': '+ value)
+                logger.info(key + ': '+ value)
             return False
 
         if self.args.edittypes:
@@ -221,7 +227,7 @@ class Classifier:
             return
 
         if bool(self.args.specific_folder) ^ bool(self.args.specific_types):
-            print(
+            logger.info(
                 'Specific Folder and Specific Types need to be specified together')
             sys.exit()
 
@@ -252,7 +258,7 @@ class Classifier:
 
         if self.args.dateformat:
             if not self.args.date:
-                print(
+                logger.info(
                     'Dateformat -df must be given alongwith date -dt option')
                 sys.exit()
 
@@ -262,31 +268,31 @@ class Classifier:
             else:
                 self.classify_by_date(self.dateformat, output, directory)
         elif self.dirconf and os.path.isfile(self.dirconf):
-            print('Found config in current directory')
+            logger.info('Found config in current directory')
             if self.args.output:
-                print('Your output directory is being ignored!!!')
+                logger.info('Your output directory is being ignored!!!')
             for items in open(self.dirconf, "r"):
                 # reset formats for individual folders
                 self.formats = {}
                 try:
                     (key, dst, val) = items.split(':')
                     self.formats[key] = val.replace('\n', '').split(',')
-                    print("\nScanning:  " + directory +
+                    logger.info("\nScanning:  " + directory +
                           "\nFor:       " + key +
                           '\nFormats:   ' + val)
                     self.classify(self.formats, dst, directory)
                 except ValueError:
-                    print("Your local config file is malformed. Please check and try again.")
+                    logger.info("Your local config file is malformed. Please check and try again.")
                     return False
         else:
-            print("\nScanning Folder: " + directory)
+            logger.info("\nScanning Folder: " + directory)
             if self.args.specific_types:
-                print("For: " + str(self.formats.items()))
+                logger.info("For: " + str(self.formats.items()))
             else:
-                print("Using the default CONFIG File\n")
+                logger.info("Using the default CONFIG File\n")
             self.classify(self.formats, output, directory)
 
-        print("Done!\n")
+        logger.info("Done!\n")
         return True
 
 if __name__ == "__main__":
