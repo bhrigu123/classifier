@@ -1,0 +1,42 @@
+name: CI
+
+on:
+    push:
+        branches: [master, dev]
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ${{matrix.platform}}
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest] # Enable `windows-latest` once someone on a windows machine can figure out why os.rename doesn't work
+        python-version: ["3.7", "3.8", "3.9"]
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/cache@v2
+      id: cache-tox-tests
+      with:
+        path: .tox
+        key: ${{ runner.os }}-${{ matrix.python-version }}-venv-${{ hashFiles('requirements.txt') }}-${{ hashFiles('tests/requirements.txt') }}-${{ hashFiles('setup.cfg') }}
+        restore-keys: |
+          ${{ runner.os }}-tox-tests
+
+    - run: pip install tox
+
+    - name: Run tox
+      run: tox
+
+    - uses: codecov/codecov-action@v2.1.0
+      if: ${{runner.os == 'Linux' && matrix.python-version == '3.9'}}
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: coverage.xml
+        fail_ci_if_error: true

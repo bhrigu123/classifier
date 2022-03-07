@@ -1,20 +1,17 @@
+"""
+    Setup file for classifier.
+    Use setup.cfg to configure your project.
+"""
 from setuptools import setup
 
-setup(
-        name="classifier",
-        version="2.0",
-        description="Classify the files in your Downloads folder into suitable destinations.",
-        url="http://github.com/bhrigu123/classifier",
-        author="Bhrigu Srivastava",
-        author_email="captain.bhrigu@gmail.com",
-        license='MIT',
-        packages=["classifier"],
-        entry_points="""
-             [console_scripts]
-             classifier = classifier.classifier:main
-        """,
-        install_requires=[
-            'arrow'
-        ],
-        zip_safe=False
-)
+if __name__ == "__main__":
+    try:
+        setup()
+    except:  # noqa
+        print(
+            "\n\nAn error occurred while building the project, "
+            "please ensure you have the most updated version of setuptools, "
+            "setuptools_scm and wheel with:\n"
+            "   pip install -U setuptools setuptools_scm wheel\n\n"
+        )
+        raise
