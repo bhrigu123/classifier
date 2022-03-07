@@ -19,8 +19,8 @@ import subprocess
 import sys
 from loguru import logger
 
+from classifier import __version__
 
-VERSION = 'Classifier 3.0'
 DIRCONFFILE = '.classifier.conf'
 PLATFORM = sys.platform
 OS = os.name
@@ -203,7 +203,7 @@ class Classifier:
     def run(self):
         if self.args.version:
             # Show version information and quit
-            logger.info(VERSION)
+            logger.info(__version__)
             return False
 
         if self.args.types:
